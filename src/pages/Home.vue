@@ -1,3 +1,3 @@
 <template>
-    <h1>Головна</h1>
+    <h1 class="text-3xl font-bold text-center">Головна</h1>
 </template>
