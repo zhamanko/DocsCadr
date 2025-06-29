@@ -52,7 +52,7 @@ export default {
 
         <div class="flex flex-col items-center w-full text-lg">
             <router-link to="/"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110 focus:bg-[#2c2f33] focus:scale-110 w-full text-center p-2 rounded-2xl mb-2 transition-all">
+                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all">
                 <p v-if="isOpen">Головна</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
                     stroke="currentColor" class="size-10">
@@ -61,7 +61,7 @@ export default {
                 </svg>
             </router-link>
             <router-link to="/add-template"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110 focus:bg-[#2c2f33] focus:scale-110 w-full text-center p-2 rounded-2xl mb-2 transition-all">
+                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all">
                 <p v-if="isOpen">Додати шаблон</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
                     stroke="currentColor" class="size-10">
@@ -70,7 +70,7 @@ export default {
                 </svg>
             </router-link>
             <router-link to="/template"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110 focus:bg-[#2c2f33] focus:scale-110 w-full text-center p-2 rounded-2xl mb-2 transition-all">
+                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all">
                 <p v-if="isOpen">Шаблон</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
                     stroke="currentColor" class="size-10">
@@ -82,17 +82,17 @@ export default {
                     <path d="M9 7V2.221a2 2 0 0 0-.5.365L4.586 6.5a2 2 0 0 0-.365.5H9Z" />
                 </svg>
             </router-link>
-            <a href="#"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110 focus:bg-[#2c2f33] focus:scale-110 w-full text-center p-2 rounded-2xl mb-2 transition-all">
+            <router-link to="/check-template"
+                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all">
                 <p v-if="isOpen">Перевірка шаблону</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
                     stroke="currentColor" class="size-10">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                         d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
-            </a>
+            </router-link>
             <a href="#"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110 focus:bg-[#2c2f33] focus:scale-110 w-full text-center p-2 rounded-2xl mb-2 transition-all">
+                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all">
                 <p v-if="isOpen">Калькулятор днів</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
                     stroke="currentColor" class="size-10">
@@ -101,7 +101,7 @@ export default {
                 </svg>
             </a>
             <a href="#"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110 focus:bg-[#2c2f33] focus:scale-110 w-full text-center p-2 rounded-2xl mb-2 transition-all">
+                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all">
                 <p v-if="isOpen">База даних</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
                     stroke="currentColor" class="size-10">
