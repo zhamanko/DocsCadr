@@ -1,56 +1,46 @@
 <template>
-    <div class="flex justify-center items-center">
-        <div class="flex flex-col items-center bg-[#1d1e20] p-12 rounded-3xl gap-3">
+    <div class="flex justify-center items-center gap-6">
+        <div class="flex flex-col w-1/2 lg:w-1/3 items-center bg-[#1d1e20] p-12 rounded-3xl gap-3">
             <h1 class="text-3xl font-bold mb-4">Калькулятор днів</h1>
-            <form @submit.prevent="calculateDays" class="flex flex-col w-full gap-4">
-                <div>
-                    <label for="startDate" class="block mb-2">Дата початку</label>
-                    <input type="date"
-                        class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
+            <CalculatorD />
+        </div>
+        <div class="flex flex-col w-1/3 items-center bg-[#1d1e20] p-12 rounded-3xl gap-3">
+            <div class="text-lg text-center">
+                <p>Днів роботи: <br> <span>-</span> </p>
+                <p>Щорічна компенсація: <br> <span>-</span> </p>
+                <p>Додаткові компенсація: <br> <span>-</span> </p>
+            </div>
+            <hr class="border-b-0.1 w-full border-white" />
+            <div class="text-center">
+                <div class="mb-4">
+                    <p>Формула щорічної компесації:</p>
+                    <p>дні_роботи ÷ 365 × Відпустка_на_рік - використано_відустки = <br> <span>-</span></p>
                 </div>
                 <div>
-                    <label for="endDate" class="block mb-2">Дата закінчення</label>
-                    <input type="date"
-                        class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
+                    <p>Формула додаткові компесації:</p>
+                    <p>ставка_додаткових × (дні_роботи - лікарняні - без_збереження) ÷ 365 = <br> <span>-</span></p>
                 </div>
-                <div>
-                    <label for="endDate" class="block mb-2">Дата закінчення</label>
-                    <input type="number"
-                        class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
-                </div>
-                <div>
-                    <label for="endDate" class="block mb-2">Дата закінчення</label>
-                    <input type="number"
-                        class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
-                </div>
-                <div>
-                    <label for="endDate" class="block mb-2">Дата закінчення</label>
-                    <input type="number"
-                        class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
-                </div>
-                <div>
-                    <label for="endDate" class="block mb-2">Дата закінчення</label>
-                    <input type="number"
-                        class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
-                </div>
-                <div>
-                    <label for="endDate" class="block mb-2">Дата закінчення</label>
-                    <input type="number"
-                        class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
-                </div>
-                <div>
-                    <label for="endDate" class="block mb-2">Дата закінчення</label>
-                    <input type="number"
-                        class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
-                </div>
-                <div>
-                    <label for="endDate" class="block mb-2">Дата закінчення</label>
-                    <input type="number"
-                        class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
-                </div>
-                <button type="submit"
-                    class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors">Розрахувати</button>
-            </form>
+            </div>
         </div>
     </div>
 </template>
+
+<script>
+import CalculatorD from '@/components/CalculatorD.vue';
+
+export default { 
+    name: 'CalculatorDays',
+    components: {
+        CalculatorD
+    },
+    data() {
+        return {
+            // Define any data properties if needed
+        };
+    },
+    methods: {
+        // Define any methods if needed
+    }
+};
+
+</script>
