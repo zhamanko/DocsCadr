@@ -36,6 +36,6 @@
                 class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
         </div>
         <button type="submit"
-            class="bg-[#252544] text-white p-2 rounded hover:bg-[#303058] transition-colors">Розрахувати</button>
+            class="bg-[#252544] text-white p-2 rounded-3xl hover:bg-[#303058] transition-colors">Розрахувати</button>
     </form>
 </template>
