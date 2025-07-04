@@ -2,7 +2,7 @@
     <div class="flex justify-center items-center gap-6">
         <div class="flex flex-col w-1/2 lg:w-1/3 items-center bg-[#1d1e20] p-12 rounded-3xl gap-3">
             <h1 class="text-3xl font-bold mb-4">Калькулятор днів</h1>
-            <CalculatorD />
+            <ComponentCalculator />
         </div>
         <div class="flex flex-col w-1/3 items-center bg-[#1d1e20] p-12 rounded-3xl gap-3">
             <div class="text-lg text-center">
@@ -26,12 +26,12 @@
 </template>
 
 <script>
-import CalculatorD from '@/components/CalculatorD.vue';
+import ComponentCalculator from '@/components/ComponentCalculator.vue';
 
 export default { 
     name: 'CalculatorDays',
     components: {
-        CalculatorD
+        ComponentCalculator
     },
     data() {
         return {

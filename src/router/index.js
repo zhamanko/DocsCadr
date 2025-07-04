@@ -4,7 +4,7 @@ import AddTemplate from '@/pages/AddTemplate.vue'
 import Template from '@/pages/Template.vue'
 import CheckTemplate from '@/pages/CheckTemplate.vue'
 import CalculatorDays from '@/pages/CalculatorDays.vue'
-import DateBaseMenu from '@/pages/DateBaseMenu.vue'
+import DateBase from '@/pages/DateBase.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -12,7 +12,7 @@ const routes = [
   { path: '/template', name: 'Template', component: Template },
   { path: '/check-template', name: 'CheckTemplate', component: CheckTemplate },
   { path: '/calculator-days', name: 'CalculatorDays', component: CalculatorDays },
-  { path: '/date-base-menu', name: 'DateBaseMenu', component: DateBaseMenu }
+  { path: '/date-base', name: 'DateBase', component: DateBase }
 ]
 
 const router = createRouter({
