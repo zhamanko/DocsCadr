@@ -57,7 +57,7 @@ export default {
 
         <div class="flex flex-col items-center w-full text-lg">
             <router-link to="/"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
+                class="flex justify-center bg-[#23262b] hover:bg-[#303439] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
                 :class="linkClass('Home')">
                 <p v-if="isOpen">Головна</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
@@ -67,7 +67,7 @@ export default {
                 </svg>
             </router-link>
             <router-link to="/add-template"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
+                class="flex justify-center bg-[#23262b] hover:bg-[#303439] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
                 :class="linkClass('AddTemplate')">
                 <p v-if="isOpen">Додати шаблон</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
@@ -77,7 +77,7 @@ export default {
                 </svg>
             </router-link>
             <router-link to="/template"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
+                class="flex justify-center bg-[#23262b] hover:bg-[#303439] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
                 :class="linkClass('Template')">
                 <p v-if="isOpen">Шаблон</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
@@ -91,7 +91,7 @@ export default {
                 </svg>
             </router-link>
             <router-link to="/check-template"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
+                class="flex justify-center bg-[#23262b] hover:bg-[#303439] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
                 :class="linkClass('CheckTemplate')">
                 <p v-if="isOpen">Перевірка шаблону</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
@@ -101,7 +101,7 @@ export default {
                 </svg>
             </router-link>
             <router-link to="/calculator-days"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
+                class="flex justify-center bg-[#23262b] hover:bg-[#303439] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
                 :class="linkClass('CalculatorDays')">
                 <p v-if="isOpen">Калькулятор днів</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
@@ -111,7 +111,7 @@ export default {
                 </svg>
             </router-link>
             <router-link to="/date-base"
-                class="flex justify-center bg-[#23262b] hover:bg-[#2c2f33] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
+                class="flex justify-center bg-[#23262b] hover:bg-[#303439] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
                 :class="linkClass('DateBase')">
                 <p v-if="isOpen">База даних</p>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
