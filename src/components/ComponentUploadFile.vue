@@ -3,6 +3,7 @@ import { showMessage } from '@/utils/message';
 
 export default {
     name: 'ComponentUploadFile',
+    emits: ['file-selected'],
     data() {
         return {
             file: null,
@@ -40,8 +41,7 @@ export default {
                 return;
             }
 
-            this.file = file;
-            this.fileName = file.name;
+            this.$emit('file-selected', file);
             showMessage('Документ завантажено.', 2000);
         }
     }
