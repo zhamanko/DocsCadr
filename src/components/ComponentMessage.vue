@@ -15,13 +15,17 @@ export default {
             type: String,
             default: 'Повідомлення'
         },
+        duration: {
+            type:Number,
+            default: 5000
+        },
         onClose: Function
     },
     mounted() {
         this.isVisible = true;
         setTimeout(() => {
             this.hideMessage();
-        }, 5000);
+        }, this.duration);
     },
     methods: {
         hideMessage() {

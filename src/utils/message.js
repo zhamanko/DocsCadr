@@ -11,20 +11,19 @@ export function showMessage(message, duration = 1800000, title) {
   const vnode = h(ComponentMessage, {
     message,
     title,
+    duration,
     onClose: hideMessage,
   });
 
   render(vnode, container);
-
-  setTimeout(() => {
-    hideMessage();
-  }, duration);
 }
 
 export function hideMessage() {
   if (container) {
-    render(null, container);
-    document.body.removeChild(container);
-    container = null;
+    setTimeout(() => {
+      render(null, container);
+      document.body.removeChild(container);
+      container = null;
+    }, 500)
   }
 }
