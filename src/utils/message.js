@@ -1,10 +1,9 @@
-
 import { h, render } from 'vue';
 import ComponentMessage from '@/components/ComponentMessage.vue';
 
 let container = null;
 
-export function showMessage(message, title, duration = 4000) {
+export function showMessage(message, duration = 1800000, title) {
   container = document.createElement('div');
   container.classList.add('component-message-container');
   document.body.appendChild(container);
@@ -17,9 +16,9 @@ export function showMessage(message, title, duration = 4000) {
 
   render(vnode, container);
 
-  // setTimeout(() => {
-  //   hideMessage();
-  // }, duration);
+  setTimeout(() => {
+    hideMessage();
+  }, duration);
 }
 
 export function hideMessage() {

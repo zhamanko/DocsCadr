@@ -3,7 +3,7 @@ export default {
     name: 'ComponentMessage',
     data() {
         return {
-            isVisible: true,
+            isVisible: false,
         };
     },
     props: {
@@ -16,15 +16,29 @@ export default {
             default: 'Повідомлення'
         },
         onClose: Function
-    }
+    },
+    mounted() {
+        this.isVisible = true;
+        setTimeout(() => {
+            this.hideMessage();
+        }, 5000);
+    },
+    methods: {
+        hideMessage() {
+            this.isVisible = false;
+            setTimeout(() => {
+                if (this.onClose) this.onClose();
+            }, 500)
+        }
+    },
 };
 </script>
 
 <template>
     <transition name="fade">
-        <div
+        <div v-if="isVisible"
             class="absolute bottom-3 text-center text-lg left-1/2 right-1/2 bg-[#1a1a1a] text-white p-4 rounded-3xl shadow-lg w-1/2 transform -translate-x-1/2">
-            <button class="absolute top-3 right-3 text-white hover:scale-115 cursor-pointer" @click="onClose"><svg
+            <button class="absolute top-3 right-3 text-white hover:scale-115 cursor-pointer" @click="hideMessage"><svg
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-7">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -35,3 +49,20 @@ export default {
         </div>
     </transition>
 </template>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+    opacity: 1;
+}
+</style>

@@ -1,6 +1,6 @@
 <script>
 import ComponentCalculator from '@/components/ComponentCalculator.vue';
-import { showMessage } from '@/utils/message';
+import { showMessage, hideMessage } from '@/utils/message';
 
 
 export default { 
@@ -21,6 +21,11 @@ export default {
             if (this.days > 365) {
                 showMessage("Кількість днів перевищує 365 днів");
                 return;
+            }else if (this.days < 0) {
+                showMessage("Кількість днів не може бути від'ємною");
+                return;
+            }else {
+                hideMessage();
             }
             this.annualCompensation = this.calculatorAnnual(data.usedDays, data.vacationPerYear);
             this.additionalCompensation = this.calculatorAdditional(data.additionalDays, data.sickDays, data.unpaidLeaveDays);
