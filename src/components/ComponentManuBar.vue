@@ -39,7 +39,7 @@ export default {
 </script>
 
 <template>
-    <div id="slide-bar-left" class="bg-[#1d1e20] w-24 h-screen p-4 shadow-lg flex flex-col items-center gap-2">
+    <div id="slide-bar-left" class="bg-[#1d1e20] w-24 h-full p-4 shadow-lg flex flex-col items-center gap-2">
 
         <div class="w-full flex justify-end mb-2">
             <button id="close-button" class="hover:cursor-pointer hover:scale-125 transition-all">
