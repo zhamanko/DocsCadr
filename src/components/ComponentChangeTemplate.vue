@@ -110,9 +110,9 @@ export default {
 </script>
 <template>
     <div class="flex flex-row gap-2">
-        <div class="bg-[#1d1e20] p-4 rounded-2xl mb-4 w-1/2">
+        <div class="bg-[#1d1e20] p-4 rounded-2xl mb-4 w-1/2 flex flex-col">
             <h2 class="text-2xl font-bold mb-4 text-center">Попередній перегляд</h2>
-            <iframe v-if="pdfUrl" :src="pdfUrl" frameborder="0" class="w-full  bg-[#dddddd] rounded-2xl"></iframe>
+            <iframe v-if="pdfUrl" :src="pdfUrl" frameborder="0" class="w-full h-full bg-[#dddddd] rounded-2xl"></iframe>
             <p v-else class="text-center font-bold">PDF ще не згенерований</p>
         </div>
 
