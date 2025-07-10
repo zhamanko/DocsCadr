@@ -7,7 +7,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(cors());
-app.use(express.static(path.resolve('server/output')));
+app.use('/files', express.static(path.resolve('server/files')));
 app.use('/api', documentsRouter);
 
 app.listen(PORT, () => {

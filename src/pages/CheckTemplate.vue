@@ -28,7 +28,6 @@ export default {
             <h1 class="text-3xl font-bold text-center mb-4">Перевірка шаблону</h1>
             <div>
                 <ComponentUploadFile @file-selected="onFileSelected"/>
-                <p class="mt-6 mx-2">Назва файла: {{ this.fileName }}</p>
             </div>
         </div>
         <ComponentChangeTemplate :file="this.file"/>
