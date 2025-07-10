@@ -6,19 +6,14 @@ import multer from 'multer'
 
 const router = express.Router()
 
-const folderUploads = path.resolve('server/files/uploads');
-const folderOutput = path.resolve('server/files/output');
+const folderTemp = path.resolve('server/files/temp');
 
-if(!fs.existsSync(folderOutput)){
-  fs.mkdirSync(folderOutput, { recursive: true });
-}
-
-if(!fs.existsSync(folderUploads)){
-  fs.mkdirSync(folderUploads, { recursive: true });
+if(!fs.existsSync(folderTemp)){
+  fs.mkdirSync(folderTemp, { recursive: true });
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, folderUploads),
+  destination: (req, file, cb) => cb(null, folderTemp),
   filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
 })
 const upload = multer({ storage })
@@ -26,20 +21,19 @@ const upload = multer({ storage })
 router.post('/generate-pdf', upload.single('docx'), (req, res) => {
   const docxPath = path.resolve(req.file.path)
   const pdfFilename = req.file.filename.replace(/\.docx$/, '.pdf')
-  const pdfPath = path.join(folderOutput, pdfFilename)
+  const pdfPath = path.join(folderTemp, pdfFilename)
 
-  exec(`soffice --headless --convert-to pdf --outdir "${folderOutput}" "${docxPath}"`, (err) => {
+  exec(`soffice --headless --convert-to pdf --outdir "${folderTemp}" "${docxPath}"`, (err) => {
     if (err) {
       console.error('LibreOffice error:', err)
       return res.status(500).json({ error: 'Конвертація не вдалася' })
     }
 
-    res.json({ url: `/files/output/` + pdfFilename })
+    res.json({ url: `/files/temp/` + pdfFilename })
 
     setTimeout(() => {
-      fs.unlink(docxPath, () => {})
-      fs.unlink(pdfPath, () => {})
-    }, 120000)
+      fs.rm(folderTemp, { recursive: true, force: true })
+    }, 300000)
   })
 })
 
