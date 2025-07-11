@@ -32,7 +32,11 @@ router.post('/generate-pdf', upload.single('docx'), (req, res) => {
     res.json({ url: `/files/temp/` + pdfFilename })
 
     setTimeout(() => {
-      fs.rm(folderTemp, { recursive: true, force: true })
+      fs.rm(folderTemp, { recursive: true, force: true }, (err) => {
+        if(err){
+          console.log("Папка вже видалена");
+        }
+      })
     }, 300000)
   })
 })
