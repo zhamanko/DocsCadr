@@ -133,7 +133,7 @@ export default {
     <div class="flex flex-row gap-4 h-2/3">
         <div class="bg-[#1d1e20] p-4 rounded-2xl w-1/2 h-full mb-4 flex flex-col">
             <h2 class="text-2xl font-bold mb-4 text-center">Попередній перегляд</h2>
-            <p v-if="file">Назва файлу: {{ file.name }}</p>
+            <p v-if="file" class="text-center mb-3">Назва файлу: {{ file.name }}</p>
             <iframe v-if="pdfUrl" :src="pdfUrl" frameborder="0" class="w-full h-full bg-[#dddddd] rounded-2xl"></iframe>
             <p v-else class="text-center font-bold">PDF ще не згенерований</p>
         </div>
