@@ -16,6 +16,9 @@
     "docx-pdf": "^0.0.1",
     "express": "^5.1.0",
     "multer": "^2.0.1",
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
     "sqlite3": "^5.1.7"
   }
 }
