@@ -12,7 +12,7 @@
     "url": "git+https://github.com/zhamanko/DocsCadr.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": "zhaman",
   "type": "module",
   "main": "main.js",
   "scripts": {
