@@ -10,6 +10,7 @@ const createWindow = () => {
         }
     })
     win.maximize();
+    win.webContents.openDevTools();
     win.loadURL('http://localhost:5173');
 }
 

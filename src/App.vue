@@ -5,6 +5,6 @@ import ComponentMessage from "./components/ComponentMessage.vue";
 
 <template>
   <SlideBarLeft/>
-  <router-view class="flex-1"></router-view>
+  <router-view class="flex-1 ms-24"></router-view>
 
 </template>
