@@ -1,10 +1,12 @@
 import positions from './positions.js';
-import employee from './employee.js';
+import employees from './employees.js';
+import employee_positions from './employee_positions.js';
 
 async function initModels() {
   try {
     await positions.initPositions();
-    await employee.initEmployees();
+    await employees.initEmployees();
+    await employee_positions.initEmployeePositions();
 
     console.log('All models initialized');
   } catch (err) {
