@@ -16,7 +16,7 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "dev": "concurrently \"vite\" \"node server/server.js\" \"wait-on http://localhost:5173 && electron .\" ",
+    "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\" ",
     "start": "electron .",
     "build": "vite build",
     "preview": "vite preview"

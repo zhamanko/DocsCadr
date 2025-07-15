@@ -5,6 +5,11 @@ export default{
     name: 'DateBase',
     components: {
         Employees
+    },
+    data() {
+        return {
+            search: '',
+        }
     }
 }
 </script>
@@ -26,7 +31,7 @@ export default{
         </div>
 
         <div class="bg-[#1d1e20] flex gap-2 p-4 shadow-2xl rounded-3xl">  
-            <input type="text" class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" placeholder="Пошук">
+            <input type="text" v-model="search" class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" placeholder="Пошук">
             <select name="" id="" class="bg-[#23262b] text-white rounded-3xl w-1/5 py-2 px-3 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
                 <option value="">Всі</option>
                 <option value="">Вільні посади</option>
@@ -34,7 +39,7 @@ export default{
         </div>
 
         <div>
-            <Employees/>
+            <Employees :search="this.search"/>
         </div>
     </div>
 </template>
