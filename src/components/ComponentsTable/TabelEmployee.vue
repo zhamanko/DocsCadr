@@ -9,7 +9,7 @@ export default{
     data () {
         return{
             employees: [],
-            sortBy: 'full_name',
+            sortBy: 'id',
             sortOrder: 'asc'
         }
     },
