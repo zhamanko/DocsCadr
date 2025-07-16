@@ -10,9 +10,9 @@ export default {
     },
     data() {
         return {
-            days: "-",
-            annualCompensation: "-",
-            additionalCompensation: "-",
+            days: "――",
+            annualCompensation: "――",
+            additionalCompensation: "――",
         };
     },
     methods: {
@@ -35,23 +35,23 @@ export default {
             const end = new Date(dateEnd);
             if (end < start) {
                 showMessage("Дата закінчення не може бути раніше дати початку");
-                return "-";
+                return "――";
             }
             const diffTime = Math.abs(end - start);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-            return diffDays > 0 ? diffDays : "-";
+            return diffDays > 0 ? diffDays : "――";
         },
         calculatorAnnual(usedDays, vacationPerYear) {
             const compensation = (this.days / 365) * vacationPerYear - usedDays;
-            return compensation >= 0 ? compensation.toFixed(2) : "-";
+            return compensation >= 0 ? compensation.toFixed(2) : "――";
         },
         calculatorAdditional(additionalDays, sickDays, unpaidLeaveDays) {
             const compensation = additionalDays * (this.days - sickDays - unpaidLeaveDays) / 365;
-            return compensation >= 0 ? compensation.toFixed(2) : "-";
+            return compensation >= 0 ? compensation.toFixed(2) : "――";
         },
         roundNum(number){
-            if (number === "-") {
-                return "-";
+            if (number === "――") {
+                return "――";
             }
             return Math.round(number);
         }

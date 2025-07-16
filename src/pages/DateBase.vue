@@ -38,7 +38,7 @@ export default{
             </select>
         </div>
 
-        <div>
+        <div class="w-full bg-[#1d1e20] text-white rounded-3xl shadow-lg pb-6">
             <Employees :search="this.search"/>
         </div>
     </div>
