@@ -1,1 +1,32 @@
 @import "tailwindcss";
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px; /* якщо буде overflow-x */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #6b7280;
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af;
+  }
+
+  /* Ефект зсуву скролбара трохи вліво (хакавий спосіб) */
+  .scrollbar-offset-left {
+    margin-right: 8px; /* компенсує ширину скролбара */
+    padding-right: 8px;
+  }
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #6b7280 transparent;
+  }
+}

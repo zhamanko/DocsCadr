@@ -1,14 +1,17 @@
 <script>
 import Employees from '@/components/ComponentsTable/TabelEmployee.vue';
+import ComponentAddEmployees from '@/components/ComponentsTable/ComponentAddEmployees.vue';
 
 export default{
     name: 'DateBase',
     components: {
-        Employees
+        Employees,
+        ComponentAddEmployees,
     },
     data() {
         return {
             search: '',
+            nameTable: 'працівника',
         }
     }
 }
@@ -22,10 +25,10 @@ export default{
                 <h1>База даних</h1>
             </div>
             <div class="bg-[#1d1e20] h-16 w-1/5 px-6 flex items-center justify-center shadow-lg rounded-3xl">
-                <select name="" id="" class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
-                    <option value="">Працівники</option>
-                    <option value="">Журнал</option>
-                    <option value="">Посади</option>
+                <select v-model="nameTable" class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
+                    <option value="працівника">Працівники</option>
+                    <option value="наказ">Журнал</option>
+                    <option value="посаду">Посади</option>
                 </select>
             </div>
         </div>
@@ -38,8 +41,13 @@ export default{
             </select>
         </div>
 
+        <div class="w-full">
+            <button class="w-full text-center p-4 bg-[#1d1e20] hover:bg-[#2d3036] hover:scale-101 rounded-3xl transition cursor-pointer">Додати {{ nameTable }}</button>
+        </div>
+
         <div class="w-full bg-[#1d1e20] text-white rounded-3xl shadow-lg pb-6">
-            <Employees :search="this.search"/>
+            <!-- <Employees :search="this.search"/> -->
+             <ComponentAddEmployees />
         </div>
     </div>
 </template>
