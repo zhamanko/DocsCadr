@@ -1,10 +1,12 @@
 <script>
+import axios from '@/axios';
+
 export default {
     name: "ComponentAddEmployees",
     data() {
         return {
             search: '',
-            allOption: ['Костюмер', 'Начальник', 'Директор', 'Заступник'],
+            freePostions: [],
             filteredOptions: [],
             showDropdown: false,
             type_work: "",
@@ -14,11 +16,12 @@ export default {
         filterOptions() {
             const value = this.search.trim().toLowerCase();
             this.filteredOptions = value
-                ? this.allOption.filter(name => name.toLowerCase().includes(value))
+                ? this.freePostions.filter(item => item.position.toLowerCase().includes(value))
                 : [];
         },
         selectOption(option) {
-            this.search = option;
+            this.search = `${option.position}`;
+            this.selectedPosition = option;
             this.showDropdown = false;
         },
         handleClickOutside(event) {
@@ -26,10 +29,19 @@ export default {
             if (container && !container.contains(event.target)) {
                 this.showDropdown = false;
             }
+        },
+        async fetchFreePositions() {
+            try {
+                const response = await axios.get('/api/free-positions');
+                this.freePostions = response.data;
+            } catch (error) {
+                console.error('Помилка при завантаженні вільних позицій', error);
+            }
         }
     },
     mounted() {
         document.addEventListener('click', this.handleClickOutside);
+        this.fetchFreePositions();
     },
     beforeUnmount() {
         document.removeEventListener('click', this.handleClickOutside);
@@ -41,7 +53,6 @@ export default {
     <div class="flex flex-col p-4">
         <div class="flex gap-9">
             <div class="flex flex-col gap-5 w-full">
-
                 <div class="flex flex-col gap-2">
                     <label for="full_name" class="ps-4">Повне ім'я</label>
                     <input type="text" name="full_name"
@@ -61,7 +72,7 @@ export default {
                             class="absolute z-10 w-full border bg-[#23262b] border-none rounded-b-3xl max-h-40 overflow-y-auto overflow-x-auto shadow scrollbar-thin">
                             <div v-for="(option, index) in filteredOptions" :key="index"
                                 class="px-3 py-2 hover:bg-[#2d3036] cursor-pointer" @click="selectOption(option)">
-                                {{ option }}
+                                {{ option.position }} | {{ option.free_rate }} ставок
                             </div>
                         </div>
                     </div>
@@ -93,13 +104,6 @@ export default {
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label for="full_name" class="ps-4">Оклад</label>
-                    <input type="text" name="full_name"
-                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
-                        placeholder="1">
-                </div>
-
-                <div class="flex flex-col gap-2">
                     <label for="type_work" class="ps-4">Тип працевлаштування</label>
                     <select name="type_work" id="" v-model="type_work"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
@@ -110,8 +114,14 @@ export default {
                     </select>
                 </div>
 
-                <div class="flex flex-col gap-2"
-                v-if="type_work === 'Доплата'">
+                <div class="flex flex-col gap-2" v-if="type_work !== 'Доплата'">
+                    <label for="full_name" class="ps-4">Оклад</label>
+                    <input type="text" name="full_name"
+                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
+                        placeholder="1">
+                </div>
+
+                <div class="flex flex-col gap-2" v-if="type_work === 'Доплата'">
                     <label for="Bonus" class="ps-4">Бонус доплати</label>
                     <input type="text" name="Bonus"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"

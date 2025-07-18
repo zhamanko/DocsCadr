@@ -3,8 +3,20 @@ import db from '../db.js';
 
 const router = Router();
 
-router.get('/positions', (req, res) => {
-  db.all('SELECT * FROM positions', (err, rows) => {
+router.get('/free-positions', (req, res) => {
+  const query = `
+  SELECT 
+    p.id,
+    p.position,
+    p.rate_totale,
+  ROUND(p.rate_totale - IFNULL(SUM(ep.rate), 0), 2) AS free_rate
+  FROM positions p
+  LEFT JOIN employee_positions ep ON p.id = ep.position_id
+  GROUP BY p.id
+  HAVING free_rate > 0
+  `;
+
+  db.all(query, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
@@ -19,7 +31,7 @@ router.post('/positions', (req, res) => {
   db.run(
     'INSERT INTO positions (position, section, unit) VALUES (?, ?, ?)',
     [position, section, unit || null],
-    function(err) {
+    function (err) {
       if (err) return res.status(500).json({ error: err.message });
       res.status(201).json({ id: this.lastID });
     }
