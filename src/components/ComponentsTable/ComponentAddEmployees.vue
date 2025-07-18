@@ -9,7 +9,16 @@ export default {
             freePostions: [],
             filteredOptions: [],
             showDropdown: false,
-            type_work: "",
+            selectedPosition: [],
+
+            full_name: '',
+            isVPO: false,
+            invalidity: '',
+            type_work: '',
+            rate: '',
+            bonus_percent: '',
+            date_accepted: '',
+            selectedPositionId: null,
         };
     },
     methods: {
@@ -37,6 +46,10 @@ export default {
             } catch (error) {
                 console.error('Помилка при завантаженні вільних позицій', error);
             }
+        },
+        formatDateToDDMMYYY(dateStr) {
+            const [yyyy, mm, dd] = dateStr.split('-');
+            return `${dd}.${mm}.${yyyy}`;
         }
     },
     mounted() {
@@ -55,7 +68,7 @@ export default {
             <div class="flex flex-col gap-5 w-full">
                 <div class="flex flex-col gap-2">
                     <label for="full_name" class="ps-4">Повне ім'я</label>
-                    <input type="text" name="full_name"
+                    <input type="text" name="full_name" v-model="full_name"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
                         placeholder="Іванич Іван Іванович">
                 </div>
@@ -79,17 +92,27 @@ export default {
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label for="VBO" class="ps-4">Впо</label>
-                    <input type="text" name="VBO"
-                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
-                        placeholder="...">
+                    <label for="invalidity" class="ps-4">Інвалідність</label>
+                    <select name="invalidity" v-model="invalidity"
+                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
+                        <option value="">Ⅰ група</option>
+                        <option value="">ⅠⅠ група</option>
+                        <option value="">ⅠⅠⅠ група</option>
+                    </select>
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label for="invalidity" class="ps-4">Інвалідність</label>
-                    <input type="text" name="invalidity"
-                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
-                        placeholder="...">
+                    <label class="ps-4 inline-flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" v-model="isVPO" class="peer hidden" />
+                        <div
+                            class="w-5 h-5 border-2 border-gray-400 rounded-md peer-checked:bg-blue-600 peer-checked:border-blue-600 flex items-center justify-center transition">
+                            <svg class="w-3 h-3 text-white hidden peer-checked:block" fill="none" stroke="currentColor"
+                                stroke-width="3" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span>ВПО</span>
+                    </label>
                 </div>
 
             </div>
@@ -98,9 +121,8 @@ export default {
 
                 <div class="flex flex-col gap-2">
                     <label for="date_accepted" class="ps-4">Дата прийняття</label>
-                    <input type="date" name="date_accepted"
-                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
-                        placeholder="...">
+                    <input type="date" name="date_accepted" v-model="date_accepted"
+                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
                 </div>
 
                 <div class="flex flex-col gap-2">
@@ -114,18 +136,18 @@ export default {
                     </select>
                 </div>
 
-                <div class="flex flex-col gap-2" v-if="type_work !== 'Доплата'">
-                    <label for="full_name" class="ps-4">Оклад</label>
-                    <input type="text" name="full_name"
+                <div class="flex flex-col gap-2">
+                    <label for="rate" class="ps-4">Оклад</label>
+                    <input type="text" name="rate" v-model="rate"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
                         placeholder="1">
                 </div>
 
                 <div class="flex flex-col gap-2" v-if="type_work === 'Доплата'">
                     <label for="Bonus" class="ps-4">Бонус доплати</label>
-                    <input type="text" name="Bonus"
+                    <input type="text" name="Bonus" v-model="bonus_percent"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
-                        placeholder="30%">
+                        placeholder="30">
                 </div>
             </div>
         </div>

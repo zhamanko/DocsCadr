@@ -5,15 +5,20 @@ const router = Router();
 
 router.get('/free-positions', (req, res) => {
   const query = `
-  SELECT 
+    SELECT 
     p.id,
     p.position,
     p.rate_totale,
-  ROUND(p.rate_totale - IFNULL(SUM(ep.rate), 0), 2) AS free_rate
-  FROM positions p
-  LEFT JOIN employee_positions ep ON p.id = ep.position_id
-  GROUP BY p.id
-  HAVING free_rate > 0
+    ROUND(p.rate_totale - IFNULL(SUM(
+    CASE 
+      WHEN ep.ZSU = '1' OR ep.end_date IS NOT NULL THEN 0
+      ELSE ep.rate
+    END
+    ), 0), 2) AS free_rate
+    FROM positions p
+    LEFT JOIN employee_positions ep ON p.id = ep.position_id
+    GROUP BY p.id
+    HAVING free_rate > 0
   `;
 
   db.all(query, [], (err, rows) => {
