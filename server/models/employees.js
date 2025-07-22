@@ -7,7 +7,8 @@ function initEmployees() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         full_name TEXT NOT NULL,
         VBO TEXT, 
-        Invalidity TEXT
+        invalidity TEXT,
+        flag INTEGER DEFAULT 1 NOT NULL
       )
     `, (err) => {
       if (err) return reject(err);

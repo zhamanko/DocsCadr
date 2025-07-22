@@ -1,5 +1,6 @@
 <script>
 import axios from '@/axios';
+import { showMessage, hideMessage } from '@/utils/message';
 
 export default {
     name: "ComponentAddEmployees",
@@ -9,12 +10,12 @@ export default {
             freePostions: [],
             filteredOptions: [],
             showDropdown: false,
-            selectedPosition: [],
+            selectedPositionFreeRate: null,
 
             full_name: '',
             isVPO: false,
             invalidity: '',
-            type_work: '',
+            type_work: 'Основне місце роботи',
             rate: '',
             bonus_percent: '',
             date_accepted: '',
@@ -30,7 +31,8 @@ export default {
         },
         selectOption(option) {
             this.search = `${option.position}`;
-            this.selectedPosition = option;
+            this.selectedPositionId = option.id;
+            this.selectedPositionFreeRate = option.free_rate;
             this.showDropdown = false;
         },
         handleClickOutside(event) {
@@ -46,6 +48,39 @@ export default {
             } catch (error) {
                 console.error('Помилка при завантаженні вільних позицій', error);
             }
+        },
+        async SubmitForm() {
+            if (!this.selectedPositionId) return showMessage('Оберіть посаду');
+            if (!this.date_accepted) return showMessage('Оберіть дату прийняття');
+            if (!this.rate) return showMessage('Заповніть поле \"Оклад\"');
+            if (!this.bonus_percent && this.type_work === "Доплата") return showMessage('Заповніть поле \"Бонус доплати\"');
+
+            const nameParts = this.full_name.trim().split(/\s+/);
+            if (nameParts.length !== 3) {
+                showMessage("ПІБ має складатися з трьох слів (Прізвище Імʼя По батькові)");
+                return;
+            }
+
+            if(parseFloat(this.selectedPositionFreeRate) < parseFloat(this.rate)) return showMessage('Ставка занята')
+
+            const payload = {
+                full_name: this.full_name,
+                VBO: this.isVPO ? 'Так' : null,
+                invalidity: this.invalidity ? this.invalidity : null,
+                position_id: this.selectedPositionId,
+                rate: parseFloat(this.rate),
+                bonus_percent: this.bonus_percent ? this.bonus_percent + '%' : null,
+                note: this.type_work,
+                start_date: this.formatDateToDDMMYYY(this.date_accepted),
+            };
+
+            try {
+                await axios.post('/api/employees', payload);
+                showMessage("Працівника додано!");
+            } catch (err) {
+                console.error('Помилка при збережені', err);
+            }
+
         },
         formatDateToDDMMYYY(dateStr) {
             const [yyyy, mm, dd] = dateStr.split('-');
@@ -95,9 +130,10 @@ export default {
                     <label for="invalidity" class="ps-4">Інвалідність</label>
                     <select name="invalidity" v-model="invalidity"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
-                        <option value="">Ⅰ група</option>
-                        <option value="">ⅠⅠ група</option>
-                        <option value="">ⅠⅠⅠ група</option>
+                        <option value="">Немає</option>
+                        <option value="I група">Ⅰ група</option>
+                        <option value="ⅠⅠ група">ⅠⅠ група</option>
+                        <option value="ⅠⅠⅠ група">ⅠⅠⅠ група</option>
                     </select>
                 </div>
 
@@ -129,9 +165,9 @@ export default {
                     <label for="type_work" class="ps-4">Тип працевлаштування</label>
                     <select name="type_work" id="" v-model="type_work"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
-                        <option value="">Основне місце роботи</option>
-                        <option value="">Внутрішнє сумісництво</option>
-                        <option value="">Зовнішнє сумісництво</option>
+                        <option value="Основне місце роботи">Основне місце роботи</option>
+                        <option value="Внутрішнє сумісництво">Внутрішнє сумісництво</option>
+                        <option value="Зовнішнє сумісництво">Зовнішнє сумісництво</option>
                         <option value="Доплата">Доплата</option>
                     </select>
                 </div>
@@ -151,7 +187,7 @@ export default {
                 </div>
             </div>
         </div>
-        <button
+        <button @click="SubmitForm"
             class="bg-[#263028] mt-4 text-white rounded-3xl p-2 hover:bg-[#2e3d31] focus:bg-[#2e3d31] hover:scale-101 focus:scale-101 transition">
             Додати працівника</button>
     </div>

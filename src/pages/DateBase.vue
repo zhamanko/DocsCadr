@@ -1,16 +1,13 @@
 <script>
 import Employees from '@/components/ComponentsTable/TabelEmployee.vue';
-import ComponentAddEmployees from '@/components/ComponentsTable/ComponentAddEmployees.vue';
 
 export default {
     name: 'DateBase',
     components: {
         Employees,
-        ComponentAddEmployees,
     },
     data() {
         return {
-            showAddEmployee: false,
             search: '',
             nameTable: 'працівника',
         }
@@ -46,17 +43,8 @@ export default {
             </select>
         </div>
 
-        <div class="w-full">
-            <button @click="showAddEmployee = !showAddEmployee"
-                class="w-full text-center p-4 bg-[#1d1e20] hover:bg-[#2d3036] hover:scale-101 rounded-3xl transition cursor-pointer">
-                <span v-if="!showAddEmployee">Додати {{ nameTable }}</span>
-                <span v-else>Вернутись до таблиці</span>
-            </button>
-        </div>
-
         <div class="w-full bg-[#1d1e20] text-white rounded-3xl shadow-lg pb-6">
-            <Employees v-if="!showAddEmployee" :search="this.search" />
-            <ComponentAddEmployees v-else />
+            <Employees :search="this.search" />
         </div>
     </div>
 </template>

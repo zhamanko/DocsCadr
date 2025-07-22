@@ -13,6 +13,7 @@ function initEmployeePositions() {
             ZSU TEXT,
             start_date TEXT NOT NULL,
             end_date TEXT,
+            flag INTEGER DEFAULT 1 NOT NULL,
             FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
             FOREIGN KEY (position_id) REFERENCES positions(id) ON DELETE CASCADE
       )

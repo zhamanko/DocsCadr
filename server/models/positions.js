@@ -8,30 +8,27 @@ function initPositions() {
         position TEXT NOT NULL,
         section TEXT NOT NULL,
         rate_totale REAL NOT NULL DEFAULT 1,
-        unit TEXT
+        unit TEXT,
+        flag INTEGER DEFAULT 1 NOT NULL
       )
     `, (err) => {
       if (err) return reject(err);
 
-      // Check if table is empty
       db.get('SELECT COUNT(*) AS count FROM positions', (err, row) => {
         if (err) return reject(err);
 
         if (row.count === 0) {
-          // Start a transaction for better performance
           db.run('BEGIN TRANSACTION');
           
           try {
             const insert = db.prepare(`INSERT INTO positions (position, section, unit, rate_totale) VALUES (?, ?, ?, ?)`);
             
-            // Shortened section names for readability
             const ADMIN_SECTION = 'Адміністративно-управлінський персонал';
             const ART_SECTION = 'Художній персонал';
             const ACTOR_SECTION = 'Артистичний персонал';
             const ORCHESTRA_SECTION = 'Артисти оркестру';
             const TECH_SECTION = 'Технічно-експлуатаційні служби';
             
-            // Unit names
             const COSTUME_UNIT = 'Костюмерний цех';
             const PROP_UNIT = 'Реквізиторсько-бутафорський цех';
             const TAILOR_UNIT = 'Кравецький цех';
