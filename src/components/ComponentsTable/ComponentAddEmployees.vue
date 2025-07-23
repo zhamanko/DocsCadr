@@ -16,7 +16,7 @@ export default {
             isVPO: false,
             invalidity: '',
             type_work: 'Основне місце роботи',
-            rate: '',
+            rate: '1',
             bonus_percent: '',
             date_accepted: '',
             selectedPositionId: null,
@@ -61,7 +61,7 @@ export default {
                 return;
             }
 
-            if(parseFloat(this.selectedPositionFreeRate) < parseFloat(this.rate)) return showMessage('Ставка занята')
+            if (parseFloat(this.selectedPositionFreeRate) < parseFloat(this.rate)) return showMessage('Ставка занята')
 
             const payload = {
                 full_name: this.full_name,
@@ -77,6 +77,9 @@ export default {
             try {
                 await axios.post('/api/employees', payload);
                 showMessage("Працівника додано!");
+                setTimeout(() => {
+                    this.$emit('saved');
+                }, 1000)
             } catch (err) {
                 console.error('Помилка при збережені', err);
             }
@@ -93,6 +96,15 @@ export default {
     },
     beforeUnmount() {
         document.removeEventListener('click', this.handleClickOutside);
+    },
+    watch: {
+        type_work: {
+            handler(newType) {
+                if ((newType || "").includes('сумісництво') || (newType || "").includes('Доплата')) {
+                    this.rate = "0.5"
+                } else { this.rate = '1' };
+            }
+        }
     }
 };
 </script>
@@ -163,7 +175,7 @@ export default {
 
                 <div class="flex flex-col gap-2">
                     <label for="type_work" class="ps-4">Тип працевлаштування</label>
-                    <select name="type_work" id="" v-model="type_work"
+                    <select name="type_work" v-model="type_work" 
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
                         <option value="Основне місце роботи">Основне місце роботи</option>
                         <option value="Внутрішнє сумісництво">Внутрішнє сумісництво</option>
@@ -174,13 +186,15 @@ export default {
 
                 <div class="flex flex-col gap-2">
                     <label for="rate" class="ps-4">Оклад</label>
-                    <input type="text" name="rate" v-model="rate"
-                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
-                        placeholder="1">
+                    <select name="rate" v-model="rate"
+                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
+                        <option v-if="type_work === 'Основне місце роботи'" value="1">Повна ставка</option>
+                        <option value="0.5">Не повна ставка</option>
+                    </select>
                 </div>
 
                 <div class="flex flex-col gap-2" v-if="type_work === 'Доплата'">
-                    <label for="Bonus" class="ps-4">Бонус доплати</label>
+                    <label for="Bonus" class="ps-4">Бонус доплати %</label>
                     <input type="text" name="Bonus" v-model="bonus_percent"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
                         placeholder="30">
