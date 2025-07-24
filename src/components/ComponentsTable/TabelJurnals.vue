@@ -28,7 +28,7 @@ export default {
 <template>
         <table class="w-full">
             <thead>
-                <tr class="border-y border-gray-600">
+                <tr class="border-b border-gray-600">
                     <th class="p-4 cursor-pointer border-r border-gray-600" @click="">ІД</th>
                     <th class="p-4 cursor-pointer border-r border-gray-600" @click="">Номер</th>
                     <th class="p-4 cursor-pointer border-r border-gray-600" @click="">Назва</th>
