@@ -41,12 +41,12 @@ export default {
             <h1 class="text-2xl font-bold">Додати шаблон</h1>
             <form action="" class="flex flex-col gap-4">
                 <ComponentUploadFile @file-selected="onFileSelected" />
-                <div>
+                <div v-if="fileType">
                     <input type="text" name="templateName" id="templateName" placeholder="Введіть назву шаблону"
                         v-model="this.fileName"
                         class="bg-[#23262b] px-4 text-white rounded-3xl py-2 w-full placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
                 </div>
-                <div>
+                <div v-if="fileName">
                     <select name="templateCategory" id="templateCategory"
                         class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
                         <option value="category1">Тип</option>
@@ -62,7 +62,7 @@ export default {
                         <option value="category3">Категорія 3</option>
                     </select>
                 </div>
-                <button type="submit"
+                <button v-if="fileType && fileName" type="submit"
                     class="bg-[#263028] w-full text-white rounded-3xl p-2 hover:bg-[#2e3d31] focus:bg-[#2e3d31] hover:scale-101 focus:scale-101 transition">Додати</button>
             </form>
         </div>
