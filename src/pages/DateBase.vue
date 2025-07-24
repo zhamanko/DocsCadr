@@ -17,7 +17,8 @@ export default {
         return {
             search: '',
             nameTable: 'empoyees',
-            showAddEmployees: false
+            showAddEmployees: false,
+            employeeKey: 0
         }
     },
     methods:{
