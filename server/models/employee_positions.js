@@ -10,7 +10,7 @@ function initEmployeePositions() {
             rate REAL NOT NULL CHECK (rate > 0 AND rate <= 1),
             bonus_percent REAL DEFAULT 0,
             note TEXT,
-            ZSU TEXT,
+            ZSU TEXT DEFAULT NULL,
             start_date TEXT NOT NULL,
             end_date TEXT,
             flag INTEGER DEFAULT 1 NOT NULL,

@@ -22,12 +22,14 @@ router.get('/employees-full', (req, res) => {
 
   const query = `
     SELECT 
-      ep.id AS id,
+      ep.id,
+      ep.employee_id,
       e.full_name,
       p.position  AS position,
       ep.start_date,
       e.invalidity,
       ep.ZSU,
+      ep.rate,
       ep.note AS work_type,
       e.VBO,
       ep.bonus_percent
@@ -44,7 +46,7 @@ router.get('/employees-full', (req, res) => {
         OR e.invalidity LIKE ?
       )
       AND ep.end_date IS NULL
-      AND ep.ZSU IS NOT NULL
+      AND ep.ZSU IS NULL
     ORDER BY ${sortField} ${sortOrder}
   `;
 
@@ -66,7 +68,6 @@ router.post('/employees', (req, res) => {
     rate,
     bonus_percent,
     note,
-    ZSU,
     start_date,
   } = req.body;
 
@@ -87,15 +88,14 @@ router.post('/employees', (req, res) => {
         rate,
         bonus_percent,
         note,
-        ZSU,
         start_date
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
 
     db.run(
       insertPosition,
-      [employeeId, position_id, rate, bonus_percent, note, ZSU || '', start_date],
+      [employeeId, position_id, rate, bonus_percent, note, start_date],
       function (err) {
         if (err) {
           console.error("Insert into employee_positions failed:", err.message);
@@ -107,5 +107,118 @@ router.post('/employees', (req, res) => {
     );
   });
 })
+
+router.post('/employees-update', (req, res) => {
+  const {
+    full_name,
+    VBO,
+    invalidity,
+    position,
+    rate,
+    bonus_percent,
+    note,
+    start_date,
+    ZSU,
+  } = req.body;
+
+  const findPositionQuery = `SELECT id FROM positions WHERE position = ? LIMIT 1`;
+
+  db.get(findPositionQuery, [position], (err, positionRow) => {
+    if (err) {
+      console.error('Error fetching position:', err.message);
+      return res.status(500).json({ error: 'Помилка на сервері' });
+    }
+
+    if (!positionRow) {
+      return res.status(400).json({ error: 'Посада не знайдена' });
+    }
+
+    const position_id = positionRow.id;
+
+    const findEmployeeQuery = `SELECT id FROM employees WHERE full_name = ? LIMIT 1`;
+
+    db.get(findEmployeeQuery, [full_name], (err, employeeRow) => {
+      if (err) {
+        console.error('Error fetching employee:', err.message);
+        return res.status(500).json({ error: 'Помилка на сервері' });
+      }
+
+      if (!employeeRow) {
+        return res.status(400).json({ error: 'Працівник не знайдений' });
+      }
+
+      const employee_id = employeeRow.id;
+
+      const updateEmployeeQuery = `
+        UPDATE employees
+        SET VBO = ?, invalidity = ?
+        WHERE id = ?
+      `;
+
+      db.run(updateEmployeeQuery, [VBO, invalidity, employee_id], function (err) {
+        if (err) {
+          console.error('Error updating employee:', err.message);
+          return res.status(500).json({ error: 'Помилка оновлення працівника' });
+        }
+
+        const updatePositionQuery = `
+          UPDATE employee_positions
+          SET
+            position_id = ?,
+            rate = ?,
+            bonus_percent = ?,
+            note = ?,
+            start_date = ?,
+            ZSU = ?
+          WHERE employee_id = ? AND end_date IS NULL
+        `;
+
+        db.run(updatePositionQuery, [
+          position_id,
+          rate,
+          bonus_percent,
+          note,
+          start_date,
+          ZSU,
+          employee_id
+        ], function (err) {
+          if (err) {
+            console.error('Error updating employee position:', err.message);
+            return res.status(500).json({ error: 'Помилка оновлення позиції працівника' });
+          }
+
+          return res.json({ success: true, message: 'Дані успішно оновлені' });
+        });
+      });
+    });
+  });
+});
+
+router.post('/employees-release', (req, res) => {
+  const {
+    id,
+    end_date
+  } = req.body;
+
+  const updatePositionQuery = `
+          UPDATE employee_positions
+          SET
+            end_date = ?
+          WHERE id = ? AND end_date IS NULL
+        `;
+
+  db.run(updatePositionQuery, [
+    end_date,
+    id
+  ], function (err) {
+    if (err) {
+      console.error('Error updating employee position:', err.message);
+      return res.status(500).json({ error: 'Помилка оновлення позиції працівника' });
+    }
+
+    return res.json({ success: true, message: 'Дані успішно оновлені' });
+  });
+});
+
 
 export default router;
