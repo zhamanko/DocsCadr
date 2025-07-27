@@ -5,6 +5,7 @@ import models from './models/index.js';
 import documentsRouter from './routes/documents.js';
 import positionRouter from './routes/positions.js';
 import employeesRouter from './routes/employees.js';
+import journalsRouter from './routes/journals.js';
 
 const app = express();
 const PORT = 3000;
@@ -16,6 +17,7 @@ app.use('/files', express.static(path.resolve('server/files')));
 app.use('/api', documentsRouter);
 app.use('/api', positionRouter);
 app.use('/api', employeesRouter);
+app.use('/api', journalsRouter);
 
 
 app.listen(PORT, async () => {

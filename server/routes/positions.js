@@ -43,4 +43,56 @@ router.post('/positions', (req, res) => {
   );
 });
 
+router.get('/positions', (req, res) => {
+  const search = `%${req.query.search || ''}%`;
+
+  const allowedSortFields = {
+    id: 'p.id',
+    position: 'p.position',
+    section: 'p.section',
+    rate_totale: 'p.rate_totale',
+    free_rate: 'free_rate',
+    unit: 'p.unit'
+  };
+
+  const sortField = allowedSortFields[req.query.sort_by] || 'p.position';
+  const sortOrder = req.query.sort_order === 'desc' ? 'DESC' : 'ASC';
+
+  console.log(`Sorting by: ${sortField} ${sortOrder}`);
+
+  const query = `
+  SELECT 
+    p.id,
+    p.position,
+    p.section,
+    p.rate_totale,
+    p.unit,
+    ROUND(p.rate_totale - IFNULL(SUM(
+      CASE 
+        WHEN ep.ZSU = '1' OR ep.end_date IS NOT NULL THEN 0
+        ELSE ep.rate
+      END
+    ), 0), 2) AS free_rate
+  FROM positions p
+  LEFT JOIN employee_positions ep ON p.id = ep.position_id
+  GROUP BY p.id
+  HAVING (
+    p.position LIKE ? OR
+    p.section LIKE ? OR
+    p.rate_totale LIKE ? OR
+    free_rate LIKE ? OR
+    p.unit LIKE ?
+  )
+  ORDER BY ${sortField} ${sortOrder}
+`;
+
+  db.all(query, [search, search, search, search, search], (err, rows) => {
+    if (err) {
+      console.error('SQL error:', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
+  });
+});
+
 export default router;

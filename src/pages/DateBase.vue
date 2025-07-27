@@ -75,8 +75,8 @@ export default {
 
             <Employees v-else-if="nameTable === 'empoyees'" :search="search" :key="employeeKey" />
 
-            <Jurnals v-else-if="nameTable === 'jurnals'" />
-            <Positions v-else />
+            <Jurnals v-else-if="nameTable === 'jurnals'" :search="search"/>
+            <Positions v-else :search="search"/>
         </div>
     </div>
 </template>
