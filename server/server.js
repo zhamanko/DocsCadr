@@ -6,6 +6,7 @@ import documentsRouter from './routes/documents.js';
 import positionRouter from './routes/positions.js';
 import employeesRouter from './routes/employees.js';
 import journalsRouter from './routes/journals.js';
+import templatesRouter from './routes/templates.js';
 
 const app = express();
 const PORT = 3000;
@@ -18,9 +19,10 @@ app.use('/api', documentsRouter);
 app.use('/api', positionRouter);
 app.use('/api', employeesRouter);
 app.use('/api', journalsRouter);
+app.use('/api', templatesRouter);
 
 
 app.listen(PORT, async () => {
-    console.log(`Server is running on localhost:${PORT}`);
+    console.log(`Server is running on localhost: ${PORT}`);
     await models.initModels();
 })
