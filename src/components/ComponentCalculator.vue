@@ -23,7 +23,7 @@ export default {
 </script>
 
 <template>
-    <form class="flex flex-col w-full gap-4">
+    <div class="flex flex-col w-full gap-4">
         <div>
             <label for="startDate" class="block mb-2">Дата початку:</label>
             <input type="date" v-model="inputData.startDate" @input="sendData"
@@ -59,5 +59,5 @@ export default {
             <input type="number" v-model="inputData.unpaidLeaveDays" @input="sendData"
                 class="bg-[#23262b] text-white rounded-3xl py-2 px-3 w-full hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition" />
         </div>
-    </form>
+    </div>
 </template>
