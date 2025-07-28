@@ -94,9 +94,11 @@ export default {
 
         <div class="bg-[#1d1e20] p-4 rounded-lg">
             <ul class="flex flex-col gap-4">
-                <li class="bg-[#23262b] min-w-58 text-center hover:bg-[#2c2f33] focus:bg-[#2c2f33] focus:scale-101 hover:scale-101 transition text-white p-4 rounded-2xl"
-                    v-for="template in templates" :key="template.id">
-                    {{ template.type }} {{ template.name }} {{ template.addition }}</li>
+                <router-link
+                v-for="template in templates" :key="template.id"
+                    :to="{ name: 'UpdateTemplate', params: { type: template.type, name: template.name, addition: template.addition, file: template.file } }" 
+                    class="bg-[#23262b] min-w-58 text-center hover:bg-[#2c2f33] focus:bg-[#2c2f33] focus:scale-101 hover:scale-101 transition text-white p-4 rounded-2xl">
+                    {{ template.type }} {{ template.name }} {{ template.addition }}</router-link>
             </ul>
         </div>
     </div>
