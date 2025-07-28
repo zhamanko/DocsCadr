@@ -6,6 +6,8 @@ export default {
         return {
             search: '',
             templates: [],
+            type: 'Тип',
+            addition: 'Додаткове'
         }
     },
     methods: {
@@ -14,6 +16,8 @@ export default {
                 const response = await axios.get('/api/templates', {
                     params: {
                         search: this.search,
+                        type: this.type !== 'Тип' ? this.type : undefined,
+                        addition: this.addition !== 'Додаткове' ? this.addition : undefined
                     },
                 })
                 this.templates = response.data
@@ -28,10 +32,42 @@ export default {
             handler() {
                 this.fetchData();
             }
+        },
+        type: {
+            handler() {
+                this.fetchData();
+            }
+        },
+        addition: {
+            handler() {
+                this.fetchData();
+            }
         }
     },
     mounted() {
         this.fetchData();
+    },
+    computed: {
+        uniqueTypes() {
+            const seen = new Set();
+            return this.templates.filter(template => {
+                if (!seen.has(template.type)) {
+                    seen.add(template.type);
+                    return true;
+                }
+                return false;
+            });
+        },
+        uniqueAddition() {
+            const seen = new Set();
+            return this.templates.filter(template => {
+                if (!seen.has(template.addition)) {
+                    seen.add(template.addition);
+                    return true;
+                }
+                return false;
+            });
+        }
     }
 }
 </script>
@@ -41,16 +77,17 @@ export default {
         <div class="bg-[#1d1e20] mb-4 p-4 rounded-2xl ">
             <h1 class="text-3xl font-bold mb-4 text-center">Шаблони</h1>
             <div class="flex gap-4 justify-between items-center">
-                <select name="type" id=""
+                <select name="type" v-model="type"
                     class="bg-[#23262b] min-w-36 hover:bg-[#2c2f33] focus:bg-[#2c2f33] focus:scale-105 hover:scale-105 transition text-white p-2 rounded-2xl">
-                    <option value="" v-for="template in templates" :key="template.id">{{ template.type }}</option>
+                    <option value="Тип">Тип</option>
+                    <option v-for="template in uniqueTypes" :key="template.id" :value="template.type">{{ template.type }}</option>
                 </select>
                 <input type="text" placeholder="Пошук шаблону" v-model="search"
                     class="bg-[#23262b] flex-1 hover:bg-[#2c2f33] focus:bg-[#2c2f33] focus:scale-105 hover:scale-102 transition text-white p-2 rounded-2xl" />
-                <select name="additional" id=""
+                <select name="additional" v-model="addition"
                     class="bg-[#23262b] min-w-58 hover:bg-[#2c2f33] focus:bg-[#2c2f33] focus:scale-105 hover:scale-105 transition text-white p-2 rounded-2xl">
-                    <option value="">додаткове</option>
-                    <option value="" v-for="template in templates" :key="template.id">{{ template.addition }}</option>
+                    <option value="Додаткове">Додаткове</option>
+                    <option v-for="template in uniqueAddition" :key="template.id" :value="template.addition">{{ template.addition }}</option>
                 </select>
             </div>
         </div>

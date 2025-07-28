@@ -17,9 +17,10 @@ router.get('/templates', (req, res) => {
   const sortField = allowedSortFields[req.query.sort_by] || 't.name';
   const sortOrder = req.query.sort_order === 'desc' ? 'DESC' : 'ASC';
 
-  console.log(`Sorting by: ${sortField} ${sortOrder}`);
+  const typeFilter = req.query.type;
+  const additionFilter = req.query.addition;
 
-  const query = `
+  let query = `
     SELECT 
       t.id,
       t.type,
@@ -28,17 +29,29 @@ router.get('/templates', (req, res) => {
       t.file
     FROM templates t
     WHERE 
-     ( 
+      (
         t.name LIKE ? OR
         t.type LIKE ? OR
         t.addition LIKE ? OR
         t.file LIKE ?
       )
-      AND t.flag = 1
-    ORDER BY ${sortField} ${sortOrder}
   `;
 
-  db.all(query, [search, search, search, search], (err, rows) => {
+  const params = [search, search, search, search];
+
+  if (typeFilter) {
+    query += ` AND t.type = ?`;
+    params.push(typeFilter);
+  }
+
+  if (additionFilter) {
+    query += ` AND t.addition = ?`;
+    params.push(additionFilter);
+  }
+
+  query += ` AND t.flag = 1 ORDER BY ${sortField} ${sortOrder}`;
+
+  db.all(query, params, (err, rows) => {
     if (err) {
       console.error('SQL error:', err.message);
       return res.status(500).json({ error: err.message });
@@ -46,5 +59,6 @@ router.get('/templates', (req, res) => {
     res.json(rows);
   });
 });
+
 
 export default router;
