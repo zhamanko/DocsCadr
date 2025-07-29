@@ -96,7 +96,7 @@ export default {
             <ul class="flex flex-col gap-4">
                 <router-link
                 v-for="template in templates" :key="template.id"
-                    :to="{ name: 'UpdateTemplate', params: { type: template.type, name: template.name, addition: template.addition, file: template.file } }" 
+                    :to="{ name: 'UpdateTemplate', query: { type: template.type, name: template.name, addition: template.addition, file: template.file } }" 
                     class="bg-[#23262b] min-w-58 text-center hover:bg-[#2c2f33] focus:bg-[#2c2f33] focus:scale-101 hover:scale-101 transition text-white p-4 rounded-2xl">
                     {{ template.type }} {{ template.name }} {{ template.addition }}</router-link>
             </ul>

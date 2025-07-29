@@ -90,7 +90,7 @@ export default {
                         <path d="M9 7V2.221a2 2 0 0 0-.5.365L4.586 6.5a2 2 0 0 0-.365.5H9Z" />
                     </svg>
                 </router-link>
-                <router-link to="/check-template"
+                <router-link to="/update-template"
                     class="flex justify-center bg-[#23262b] hover:bg-[#303439] hover:scale-110  w-full text-center p-2 rounded-2xl mb-2 transition-all"
                     :class="linkClass('CheckTemplate')">
                     <p v-if="isOpen">Перевірка шаблону</p>

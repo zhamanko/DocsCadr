@@ -15,7 +15,8 @@ export default {
 
             type: this.$route.query.type,
             name: this.$route.query.name,
-            addition: this.$route.query.addition
+            addition: this.$route.query.addition,
+            filePath: this.$route.query.file
         };
     },
     methods: {
@@ -25,8 +26,10 @@ export default {
         }
     },
     created() {
-        const type = this.$route.query.type;
-        const addition = this.$route.query.addition;
+        console.log('Type:', this.type);
+        console.log('Name:', this.name);
+        console.log('Addition:', this.addition);
+        console.log('File Path:', this.filePath);
     }
 };
 </script>
