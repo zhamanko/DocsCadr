@@ -32,8 +32,14 @@ const createWindow = () => {
 }
 
 function startBackend() {
-  const serverProcess = spawn('node', [path.join(__dirname, 'server', 'server.js')]);
+  const dbPath = path.join(app.getPath('userData'), 'DocsCadr.sqlite');
+  process.env.DB_PATH = dbPath; // Передача шляху до бази даних у середовище
 
+  import('./server/db.js').then(() => {
+    console.log('Database module loaded successfully');
+  });
+
+  const serverProcess = spawn('node', [path.join(__dirname, 'server', 'server.js')]);
   serverProcess.stdout.on('data', (data) => console.log(`Backend: ${data}`));
   serverProcess.stderr.on('data', (data) => console.error(`Backend error: ${data}`));
 }
