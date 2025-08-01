@@ -1,6 +1,6 @@
 <script>
 import ComponentUploadFile from '@/components/ComponentUploadFile.vue';
-import { type } from 'os';
+
 export default {
     components: {
         ComponentUploadFile,
