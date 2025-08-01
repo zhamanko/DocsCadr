@@ -1,5 +1,6 @@
 <script>
 import ComponentUploadFile from '@/components/ComponentUploadFile.vue';
+import { type } from 'os';
 export default {
     components: {
         ComponentUploadFile,
@@ -13,6 +14,32 @@ export default {
         }
     },
     methods: {
+         async submit() {
+      try {
+        const buffer = await this.file.arrayBuffer();
+        const base64 = btoa(
+          new Uint8Array(buffer).reduce((acc, b) => acc + String.fromCharCode(b), '')
+        );
+
+        const payload = {
+          type: this.fileType,
+          name: this.fileName,
+          addition: this.fileAddition,
+          filename: this.file.name,
+          fileBuffer: base64,
+        };
+
+        const res = await axios.post('/api/templates-add', payload);
+
+        alert('✅ Шаблон збережено!');
+        this.name = '';
+        this.description = '';
+        this.selectedType = '';
+        this.file = null;
+      } catch (err) {
+        alert('❌ Помилка: ' + (err.response?.data || err.message));
+      }
+    },
         onFileSelected(file) {
             this.file = file;
 

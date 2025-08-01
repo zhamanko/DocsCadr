@@ -33,6 +33,8 @@ const createWindow = () => {
 
 function startBackend() {
   const dbPath = path.join(app.getPath('userData'), 'DocsCadr.sqlite');
+  const userDataDir = path.join(app.getPath('userData'));
+  process.env.USER_DATA_PATH = userDataDir; // Передача шляху до даних користувача у середовище
   process.env.DB_PATH = dbPath; // Передача шляху до бази даних у середовище
 
   import('./server/db.js').then(() => {
@@ -51,6 +53,12 @@ app.whenReady().then(() => {
   createWindow();
 }).catch(err => {
   console.error('Error:', err);
+});
+
+ipcMain.handle('get-docx-template', (_, filename) => {
+  const filePath = path.join(userDataDir, 'templates', filename);
+  if (!fs.existsSync(filePath)) throw new Error('Template not found');
+  return fs.readFileSync(filePath); 
 });
 
 ipcMain.handle('read-file', (_, filename) => {

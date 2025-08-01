@@ -1,7 +1,10 @@
 import { Router } from 'express';
+import fs from 'fs';
+import path from 'path';
 import db from '../db.js';
 
 const router = Router();
+const templatesDir = path.join(process.env.USER_DATA_PATH, 'templates');
 
 router.get('/templates', (req, res) => {
   const search = `%${req.query.search || ''}%`;
@@ -60,5 +63,21 @@ router.get('/templates', (req, res) => {
   });
 });
 
+router.post('/templates-add', (req, res) => {
+  const { type, name, addition, file, fileBuffer } = req.body;
+  if (!filename || !fileBuffer) return res.status(400).send('Missing data');
+
+  const filePath = path.join(templatesDir, filename);
+  fs.writeFileSync(filePath, Buffer.from(fileBuffer, 'base64'));
+
+  db.run(
+    `INSERT INTO templates (type, name, addition, file) VALUES (?, ?, ?, ?)`,
+    [type, name, addition, file],
+    function (err) {
+      if (err) return res.status(500).send(err.message);
+      res.json({ id: this.lastID });
+    }
+  );
+});
 
 export default router;
