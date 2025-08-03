@@ -8,8 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Шляхи до файлів
-const userDataDir = path.join(app.getPath('userData'), 'DocsCadr');
-const tempDir = path.join(app.getPath('temp'), 'DocsCadr');
+const userDataDir = path.join(app.getPath('userData'));
+const tempDir = path.join(app.getPath('temp'));
 
 function ensureDir(dir){
   if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -34,6 +34,7 @@ const createWindow = () => {
 function startBackend() {
   const dbPath = path.join(app.getPath('userData'), 'DocsCadr.sqlite');
   const userDataDir = path.join(app.getPath('userData'));
+  process.env.TEMP_DIR = tempDir; // Передача шляху до тимчасової директорії у середовище
   process.env.USER_DATA_PATH = userDataDir; // Передача шляху до даних користувача у середовище
   process.env.DB_PATH = dbPath; // Передача шляху до бази даних у середовище
 

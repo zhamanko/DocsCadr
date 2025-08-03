@@ -23,21 +23,38 @@ export default {
         onFileSelected(file) {
             this.file = file;
             this.fileName = file.name;
+        },
+        async loadFileFromElectron() {
+            try {
+                const buffer = await window.electronAPI.getDocxTemplate(this.filePath); // Uint8Array or Buffer
+                const blob = new Blob([new Uint8Array(buffer)], {
+                    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                });
+
+                const file = new File([blob], this.filePath, {
+                    type: blob.type,
+                    lastModified: Date.now()
+                });
+
+                this.file = file;
+                this.fileName = file.name;
+            } catch (e) {
+                console.error("Не вдалося завантажити шаблон із Electron:", e);
+            }
         }
     },
     created() {
-        console.log('Type:', this.type);
-        console.log('Name:', this.name);
-        console.log('Addition:', this.addition);
-        console.log('File Path:', this.filePath);
+        if (this.filePath) {
+            this.loadFileFromElectron();
+        }
     }
 };
 </script>
 <template>
     <div class="p-4 text-lg">
         <div class="bg-[#1d1e20] p-4 rounded-2xl mb-4">
-            <h1 class="text-3xl font-bold text-center mb-4">Перевірка шаблону</h1>
-            <div>
+            <h1 class="text-3xl font-bold text-center">Перевірка шаблону</h1>
+            <div v-if="!filePath" class="mt-4">
                 <ComponentUploadFile @file-selected="onFileSelected" />
             </div>
         </div>

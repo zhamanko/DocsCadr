@@ -6,9 +6,9 @@ import multer from 'multer'
 
 const router = express.Router()
 
-const folderTemp = path.resolve('server/files/temp');
+const folderTemp = path.join(process.env.TEMP_DIR, 'previews');
 
-if(!fs.existsSync(folderTemp)){
+if (!fs.existsSync(folderTemp)) {
   fs.mkdirSync(folderTemp, { recursive: true });
 }
 
@@ -19,6 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 router.post('/generate-pdf', upload.single('docx'), (req, res) => {
+  console.log(`Temporary folder for previews: ${folderTemp}`);
   const docxPath = path.resolve(req.file.path)
   const pdfFilename = req.file.filename.replace(/\.docx$/, '.pdf')
   const pdfPath = path.join(folderTemp, pdfFilename)
@@ -29,15 +30,17 @@ router.post('/generate-pdf', upload.single('docx'), (req, res) => {
       return res.status(500).json({ error: 'Конвертація не вдалася' })
     }
 
-    res.json({ url: `/files/temp/` + pdfFilename })
+    fs.readFile(pdfPath, (err, data) => {
+      if (err) {
+        console.error('Помилка читання PDF:', err);
+        return res.status(500).json({ error: 'Не вдалося прочитати PDF' });
+      }
 
-    setTimeout(() => {
-      fs.rm(folderTemp, { recursive: true, force: true }, (err) => {
-        if(err){
-          console.log("Папка вже видалена");
-        }
-      })
-    }, 300000)
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'inline; filename="' + pdfFilename + '"');
+      res.send(data);
+    });
+
   })
 })
 

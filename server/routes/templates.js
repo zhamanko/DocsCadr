@@ -81,7 +81,7 @@ router.post('/templates-add', async (req, res) => {
     }
 
     // Генеруємо унікальне ім'я файлу
-    const hash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+    const hash = crypto.createHash('md5').update(fileBuffer).digest('hex');
     const ext = path.extname(filename).toLowerCase() || '.docx';
     const uniqueFilename = `${hash}${ext}`;
     const newFilePath = path.join(templatesDir, uniqueFilename);

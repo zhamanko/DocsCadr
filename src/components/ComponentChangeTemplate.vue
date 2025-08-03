@@ -80,8 +80,8 @@ export default {
                 method: 'POST',
                 body: formData
             });
-            const data = await res.json();
-            this.pdfUrl = `http://localhost:3000${data.url}`;
+            const blob2 = await res.blob();
+            this.pdfUrl = URL.createObjectURL(blob2);
         },
         async downloadDocx() {
             const updatedXml = this.applyReplacements();
@@ -94,7 +94,7 @@ export default {
             a.download = 'updated.docx';
             a.click();
             URL.revokeObjectURL(url);
-        }, 
+        },
         applyReplacements() {
             let updatedXml = this.originalXml;
             for (const key of this.extractedKeys) {
