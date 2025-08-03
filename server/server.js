@@ -1,4 +1,5 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import cors from 'cors';
 import path from 'path';
 import models from './models/index.js';
@@ -12,8 +13,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(cors());
-app.use(express.json());
-app.use('/files', express.static(path.resolve('server/files')));
+app.use(bodyParser.json({ limit: '10mb' }));
 
 app.use('/api', documentsRouter);
 app.use('/api', positionRouter);
