@@ -1,9 +1,13 @@
 <script>
 import axios from '@/axios';
+import ComponentSearch from '../ComponentSearch.vue';
 import { showMessage, hideMessage } from '@/utils/message';
 
 export default {
     name: "ComponentAddEmployees",
+    components: {
+        ComponentSearch
+    },
     data() {
         return {
             search: '',
@@ -20,6 +24,17 @@ export default {
             bonus_percent: '',
             date_accepted: '',
             selectedPositionId: null,
+
+            selected: '',
+            positions: [
+                'Директор',
+                'Бухгалтер',
+                'Адміністратор',
+                'Інженер з охорони праці',
+                'Менеджер',
+                'Актор',
+                'Сценарист'
+            ]
         };
     },
     methods: {
@@ -122,7 +137,7 @@ export default {
 
                 <div class="flex flex-col gap-2">
                     <label for="position" class="ps-4">Посада</label>
-                    <div class="relative" ref="container">
+                    <!-- <div class="relative" ref="container">
                         <input type="text" name="position" v-model="search" @input="filterOptions"
                             @focus="showDropdown = true" :class="[
                                 'bg-[#23262b] flex-1 px-4 w-full text-white py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition',
@@ -135,7 +150,10 @@ export default {
                                 {{ option.position }} | {{ option.free_rate }} ставок
                             </div>
                         </div>
-                    </div>
+                    </div> -->
+                    <ComponentSearch v-model="selected" :options="positions" placeholder="Оберіть посаду..." />
+                    <p class="mt-4">Обрано: <strong>{{ selected }}</strong></p>
+
                 </div>
 
                 <div class="flex flex-col gap-2">
@@ -175,7 +193,7 @@ export default {
 
                 <div class="flex flex-col gap-2">
                     <label for="type_work" class="ps-4">Тип працевлаштування</label>
-                    <select name="type_work" v-model="type_work" 
+                    <select name="type_work" v-model="type_work"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
                         <option value="Основне місце роботи">Основне місце роботи</option>
                         <option value="Внутрішнє сумісництво">Внутрішнє сумісництво</option>
