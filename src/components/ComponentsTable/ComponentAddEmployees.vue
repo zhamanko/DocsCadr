@@ -151,7 +151,7 @@ export default {
                             </div>
                         </div>
                     </div> -->
-                    <ComponentSearch v-model="selected" :options="positions" placeholder="Оберіть посаду..." />
+                    <ComponentSearch v-model="selected" :options="freePostions" placeholder="Оберіть посаду..." />
                     <p class="mt-4">Обрано: <strong>{{ selected }}</strong></p>
 
                 </div>

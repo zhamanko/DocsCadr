@@ -57,7 +57,7 @@ export default {
   computed: {
     filteredOptions() {
       return this.options.filter(opt =>
-        opt.toLowerCase().includes(this.search.toLowerCase())
+        opt.position.toLowerCase().includes(this.search.toLowerCase())
       );
     }
   },
