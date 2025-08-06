@@ -59,7 +59,7 @@ router.get('/employees-full', (req, res) => {
   });
 });
 
-router.post('/employees', (req, res) => {
+router.post('/employees-smart', (req, res) => {
   const {
     full_name,
     VBO,
@@ -68,19 +68,12 @@ router.post('/employees', (req, res) => {
     rate,
     bonus_percent,
     note,
-    start_date,
+    start_date
   } = req.body;
 
-  const insertEmployee = `
-    INSERT INTO employees (full_name, VBO, Invalidity)
-    VALUES (?, ?, ?)
-  `;
+  const isId = Number.isInteger(full_name); // якщо це ID
 
-  db.run(insertEmployee, [full_name, VBO, invalidity], function (err) {
-    if (err) return res.status(500).json({ error: err.message });
-
-    const employeeId = this.lastID;
-
+  const createPositionRecord = (employeeId) => {
     const insertPosition = `
       INSERT INTO employee_positions (
         employee_id,
@@ -92,21 +85,28 @@ router.post('/employees', (req, res) => {
       )
       VALUES (?, ?, ?, ?, ?, ?)
     `;
+    db.run(insertPosition, [employeeId, position_id, rate, bonus_percent, note, start_date], function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ success: true, employee_id: employeeId });
+    });
+  };
 
-    db.run(
-      insertPosition,
-      [employeeId, position_id, rate, bonus_percent, note, start_date],
-      function (err) {
-        if (err) {
-          console.error("Insert into employee_positions failed:", err.message);
-          console.log(position_id);
-          return res.status(500).json({ error: err.message });
-        }
-        res.json({ success: true, employee_id: employeeId });
-      }
-    );
-  });
-})
+  if (isId) {
+    // Вже існуючий працівник — просто додаємо позицію
+    createPositionRecord(full_name);
+  } else {
+    // Новий працівник
+    const insertEmployee = `
+      INSERT INTO employees (full_name, VBO, Invalidity)
+      VALUES (?, ?, ?)
+    `;
+    db.run(insertEmployee, [full_name, VBO, invalidity], function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      const employeeId = this.lastID;
+      createPositionRecord(employeeId);
+    });
+  }
+});
 
 router.post('/employees-update', (req, res) => {
   const {

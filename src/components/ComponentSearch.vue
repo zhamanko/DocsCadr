@@ -8,7 +8,7 @@
       @focus="isOpen = true"
       @keydown.down.prevent="highlightNext"
       @keydown.up.prevent="highlightPrev"
-      @keydown.enter.prevent="selectHighlighted"
+      @change="selectHighlightedOrCustom"
     />
 
     <ul
@@ -45,6 +45,10 @@ export default {
     placeholder: {
       type: String,
       default: 'Введіть для пошуку...'
+    },
+    allowCustom: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -59,9 +63,6 @@ export default {
       return this.options.filter(opt =>
         opt.search.toLowerCase().includes(this.search.toLowerCase())
       );
-    },
-    selectedOption() {
-      return this.options.find(opt => opt.id === this.modelValue);
     }
   },
   watch: {
@@ -69,7 +70,13 @@ export default {
       immediate: true,
       handler(newVal) {
         const found = this.options.find(opt => opt.id === newVal);
-        this.search = found ? found.search : '';
+        if (found) {
+          this.search = found.search;
+        } else if (typeof newVal === 'string') {
+          this.search = newVal;
+        } else {
+          this.search = '';
+        }
       }
     }
   },
@@ -80,6 +87,16 @@ export default {
       this.isOpen = false;
       this.highlightedIndex = -1;
     },
+    selectHighlightedOrCustom() {
+      const selected = this.filteredOptions[this.highlightedIndex];
+      if (selected) {
+        this.select(selected);
+      } else if (this.allowCustom && this.search.trim()) {
+        this.$emit('update:modelValue', this.search.trim());
+        this.isOpen = false;
+        this.highlightedIndex = -1;
+      }
+    },
     highlightNext() {
       if (this.highlightedIndex < this.filteredOptions.length - 1) {
         this.highlightedIndex++;
@@ -88,12 +105,6 @@ export default {
     highlightPrev() {
       if (this.highlightedIndex > 0) {
         this.highlightedIndex--;
-      }
-    },
-    selectHighlighted() {
-      const selected = this.filteredOptions[this.highlightedIndex];
-      if (selected) {
-        this.select(selected);
       }
     },
     handleClickOutside(event) {

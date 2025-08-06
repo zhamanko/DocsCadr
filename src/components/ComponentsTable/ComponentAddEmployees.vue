@@ -11,6 +11,8 @@ export default {
     data() {
         return {
             freePostions: [],
+            employees: [],
+            isNumber: false,
 
             full_name: '',
             isVPO: false,
@@ -37,16 +39,30 @@ export default {
                 console.error('Помилка при завантаженні вільних позицій', error);
             }
         },
+        async fetchEmployees() {
+            try {
+                const response = await axios.get('/api/employees-full');
+                this.employees = response.data.map(item => ({
+                    id: item.id,
+                    search: item.full_name
+                }));
+                console.log(this.employees);
+            } catch (error) {
+                console.error('Помилка при завантаженні вільних позицій', error);
+            }
+        },
         async SubmitForm() {
             if (!this.selectedPositionId) return showMessage('Оберіть посаду');
             if (!this.date_accepted) return showMessage('Оберіть дату прийняття');
             if (!this.rate) return showMessage('Заповніть поле \"Оклад\"');
             if (!this.bonus_percent && this.type_work === "Доплата") return showMessage('Заповніть поле \"Бонус доплати\"');
 
-            const nameParts = this.full_name.trim().split(/\s+/);
-            if (nameParts.length !== 3) {
-                showMessage("ПІБ має складатися з трьох слів (Прізвище Імʼя По батькові)");
-                return;
+            if (!this.isNumber) {
+                const nameParts = this.full_name.trim().split(/\s+/);
+                if (nameParts.length !== 3) {
+                    showMessage("ПІБ має складатися з трьох слів (Прізвище Імʼя По батькові)");
+                    return;
+                }
             }
 
             if (parseFloat(this.selectedPositionFreeRate) < parseFloat(this.rate)) return showMessage('Ставка занята')
@@ -63,7 +79,7 @@ export default {
             };
 
             try {
-                await axios.post('/api/employees', payload);
+                await axios.post('/api/employees-smart', payload);
                 showMessage("Працівника додано!");
                 setTimeout(() => {
                     this.$emit('saved');
@@ -80,6 +96,7 @@ export default {
     },
     mounted() {
         this.fetchFreePositions();
+        this.fetchEmployees();
     },
     watch: {
         type_work: {
@@ -88,7 +105,12 @@ export default {
                     this.rate = "0.5"
                 } else { this.rate = '1' };
             }
-        }
+        },
+        full_name: {
+            handler(newValue) {
+                this.isNumber = !isNaN(Number(newValue));
+            }
+        },
     }
 };
 </script>
@@ -99,17 +121,17 @@ export default {
             <div class="flex flex-col gap-5 w-full">
                 <div class="flex flex-col gap-2">
                     <label for="full_name" class="ps-4">Повне ім'я</label>
-                    <input type="text" name="full_name" v-model="full_name"
-                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
-                        placeholder="Іванич Іван Іванович">
+                    <ComponentSearch v-model="full_name" :options="employees" :allowCustom="true"
+                        placeholder="Іванов Іван Іванович" />
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label for="position" class="ps-4">Посада</label>
-                    <ComponentSearch v-model="selectedPositionId" :options="freePostions" placeholder="Оберіть посаду..." />
+                    <ComponentSearch v-model="selectedPositionId" :options="freePostions"
+                        placeholder="Оберіть посаду..." />
                 </div>
 
-                <div class="flex flex-col gap-2">
+                <div v-if="!this.isNumber" class="flex flex-col gap-2">
                     <label for="invalidity" class="ps-4">Інвалідність</label>
                     <select name="invalidity" v-model="invalidity"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
@@ -120,7 +142,7 @@ export default {
                     </select>
                 </div>
 
-                <div class="flex flex-col gap-2">
+                <div v-if="!this.isNumber" class="flex flex-col gap-2">
                     <label class="ps-4 inline-flex items-center space-x-2 cursor-pointer">
                         <input type="checkbox" v-model="isVPO" class="peer hidden" />
                         <div
