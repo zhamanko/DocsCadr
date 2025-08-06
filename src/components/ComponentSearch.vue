@@ -17,14 +17,14 @@
     >
       <li
         v-for="(option, index) in filteredOptions"
-        :key="index"
+        :key="option.id"
         @mousedown.prevent="select(option)"
         :class="[
           'px-4 py-2 cursor-pointer',
           index === highlightedIndex ? 'bg-blue-500 text-white' : 'hover:bg-[#424750]'
         ]"
       >
-        {{ option }}
+        {{ option.search + (option.additons ? option.additons : '') }}
       </li>
     </ul>
   </div>
@@ -39,7 +39,7 @@ export default {
       required: true
     },
     modelValue: {
-      type: String,
+      type: [String, Number],
       default: ''
     },
     placeholder: {
@@ -49,7 +49,7 @@ export default {
   },
   data() {
     return {
-      search: this.modelValue,
+      search: '',
       isOpen: false,
       highlightedIndex: -1
     };
@@ -57,19 +57,26 @@ export default {
   computed: {
     filteredOptions() {
       return this.options.filter(opt =>
-        opt.position.toLowerCase().includes(this.search.toLowerCase())
+        opt.search.toLowerCase().includes(this.search.toLowerCase())
       );
+    },
+    selectedOption() {
+      return this.options.find(opt => opt.id === this.modelValue);
     }
   },
   watch: {
-    modelValue(newVal) {
-      this.search = newVal;
+    modelValue: {
+      immediate: true,
+      handler(newVal) {
+        const found = this.options.find(opt => opt.id === newVal);
+        this.search = found ? found.search : '';
+      }
     }
   },
   methods: {
     select(option) {
-      this.search = option;
-      this.$emit('update:modelValue', option);
+      this.search = option.search;
+      this.$emit('update:modelValue', option.id);
       this.isOpen = false;
       this.highlightedIndex = -1;
     },

@@ -10,11 +10,7 @@ export default {
     },
     data() {
         return {
-            search: '',
             freePostions: [],
-            filteredOptions: [],
-            showDropdown: false,
-            selectedPositionFreeRate: null,
 
             full_name: '',
             isVPO: false,
@@ -26,40 +22,17 @@ export default {
             selectedPositionId: null,
 
             selected: '',
-            positions: [
-                'Директор',
-                'Бухгалтер',
-                'Адміністратор',
-                'Інженер з охорони праці',
-                'Менеджер',
-                'Актор',
-                'Сценарист'
-            ]
         };
     },
     methods: {
-        filterOptions() {
-            const value = this.search.trim().toLowerCase();
-            this.filteredOptions = value
-                ? this.freePostions.filter(item => item.position.toLowerCase().includes(value))
-                : [];
-        },
-        selectOption(option) {
-            this.search = `${option.position}`;
-            this.selectedPositionId = option.id;
-            this.selectedPositionFreeRate = option.free_rate;
-            this.showDropdown = false;
-        },
-        handleClickOutside(event) {
-            const container = this.$refs.container;
-            if (container && !container.contains(event.target)) {
-                this.showDropdown = false;
-            }
-        },
         async fetchFreePositions() {
             try {
                 const response = await axios.get('/api/free-positions');
-                this.freePostions = response.data;
+                this.freePostions = response.data.map(item => ({
+                    id: item.id,
+                    search: item.position,
+                    additons: ' | ' + item.free_rate + ' ставка'
+                }));
             } catch (error) {
                 console.error('Помилка при завантаженні вільних позицій', error);
             }
@@ -106,11 +79,7 @@ export default {
         }
     },
     mounted() {
-        document.addEventListener('click', this.handleClickOutside);
         this.fetchFreePositions();
-    },
-    beforeUnmount() {
-        document.removeEventListener('click', this.handleClickOutside);
     },
     watch: {
         type_work: {
@@ -137,23 +106,7 @@ export default {
 
                 <div class="flex flex-col gap-2">
                     <label for="position" class="ps-4">Посада</label>
-                    <!-- <div class="relative" ref="container">
-                        <input type="text" name="position" v-model="search" @input="filterOptions"
-                            @focus="showDropdown = true" :class="[
-                                'bg-[#23262b] flex-1 px-4 w-full text-white py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition',
-                                filteredOptions.length && showDropdown ? 'rounded-t-3xl' : 'rounded-3xl'
-                            ]" placeholder="Артист сцени, машиніст цени,..." />
-                        <div v-if="showDropdown && filteredOptions.length"
-                            class="absolute z-10 w-full border bg-[#23262b] border-none rounded-b-3xl max-h-40 overflow-y-auto overflow-x-auto shadow scrollbar-thin">
-                            <div v-for="(option, index) in filteredOptions" :key="index"
-                                class="px-3 py-2 hover:bg-[#2d3036] cursor-pointer" @click="selectOption(option)">
-                                {{ option.position }} | {{ option.free_rate }} ставок
-                            </div>
-                        </div>
-                    </div> -->
-                    <ComponentSearch v-model="selected" :options="freePostions" placeholder="Оберіть посаду..." />
-                    <p class="mt-4">Обрано: <strong>{{ selected }}</strong></p>
-
+                    <ComponentSearch v-model="selectedPositionId" :options="freePostions" placeholder="Оберіть посаду..." />
                 </div>
 
                 <div class="flex flex-col gap-2">
