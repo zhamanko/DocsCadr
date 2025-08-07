@@ -1,16 +1,18 @@
 <script>
 import axios from '@/axios';
+import ComponentSearch from '../ComponentSearch.vue';
 import { showMessage, hideMessage } from '@/utils/message';
 
 export default {
     name: "ComponentAddEmployees",
+    components: {
+        ComponentSearch
+    },
     data() {
         return {
-            search: '',
             freePostions: [],
-            filteredOptions: [],
-            showDropdown: false,
-            selectedPositionFreeRate: null,
+            employees: [],
+            isNumber: false,
 
             full_name: '',
             isVPO: false,
@@ -20,31 +22,31 @@ export default {
             bonus_percent: '',
             date_accepted: '',
             selectedPositionId: null,
+
+            selected: '',
         };
     },
     methods: {
-        filterOptions() {
-            const value = this.search.trim().toLowerCase();
-            this.filteredOptions = value
-                ? this.freePostions.filter(item => item.position.toLowerCase().includes(value))
-                : [];
-        },
-        selectOption(option) {
-            this.search = `${option.position}`;
-            this.selectedPositionId = option.id;
-            this.selectedPositionFreeRate = option.free_rate;
-            this.showDropdown = false;
-        },
-        handleClickOutside(event) {
-            const container = this.$refs.container;
-            if (container && !container.contains(event.target)) {
-                this.showDropdown = false;
-            }
-        },
         async fetchFreePositions() {
             try {
                 const response = await axios.get('/api/free-positions');
-                this.freePostions = response.data;
+                this.freePostions = response.data.map(item => ({
+                    id: item.id,
+                    search: item.position,
+                    additons: ' | ' + item.free_rate + ' ставка'
+                }));
+            } catch (error) {
+                console.error('Помилка при завантаженні вільних позицій', error);
+            }
+        },
+        async fetchEmployees() {
+            try {
+                const response = await axios.get('/api/employees-full');
+                this.employees = response.data.map(item => ({
+                    id: item.id,
+                    search: item.full_name
+                }));
+                console.log(this.employees);
             } catch (error) {
                 console.error('Помилка при завантаженні вільних позицій', error);
             }
@@ -55,10 +57,12 @@ export default {
             if (!this.rate) return showMessage('Заповніть поле \"Оклад\"');
             if (!this.bonus_percent && this.type_work === "Доплата") return showMessage('Заповніть поле \"Бонус доплати\"');
 
-            const nameParts = this.full_name.trim().split(/\s+/);
-            if (nameParts.length !== 3) {
-                showMessage("ПІБ має складатися з трьох слів (Прізвище Імʼя По батькові)");
-                return;
+            if (!this.isNumber) {
+                const nameParts = this.full_name.trim().split(/\s+/);
+                if (nameParts.length !== 3) {
+                    showMessage("ПІБ має складатися з трьох слів (Прізвище Імʼя По батькові)");
+                    return;
+                }
             }
 
             if (parseFloat(this.selectedPositionFreeRate) < parseFloat(this.rate)) return showMessage('Ставка занята')
@@ -75,7 +79,7 @@ export default {
             };
 
             try {
-                await axios.post('/api/employees', payload);
+                await axios.post('/api/employees-smart', payload);
                 showMessage("Працівника додано!");
                 setTimeout(() => {
                     this.$emit('saved');
@@ -91,11 +95,8 @@ export default {
         }
     },
     mounted() {
-        document.addEventListener('click', this.handleClickOutside);
         this.fetchFreePositions();
-    },
-    beforeUnmount() {
-        document.removeEventListener('click', this.handleClickOutside);
+        this.fetchEmployees();
     },
     watch: {
         type_work: {
@@ -104,7 +105,12 @@ export default {
                     this.rate = "0.5"
                 } else { this.rate = '1' };
             }
-        }
+        },
+        full_name: {
+            handler(newValue) {
+                this.isNumber = !isNaN(Number(newValue));
+            }
+        },
     }
 };
 </script>
@@ -115,30 +121,17 @@ export default {
             <div class="flex flex-col gap-5 w-full">
                 <div class="flex flex-col gap-2">
                     <label for="full_name" class="ps-4">Повне ім'я</label>
-                    <input type="text" name="full_name" v-model="full_name"
-                        class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition"
-                        placeholder="Іванич Іван Іванович">
+                    <ComponentSearch v-model="full_name" :options="employees" :allowCustom="true"
+                        placeholder="Іванов Іван Іванович" />
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label for="position" class="ps-4">Посада</label>
-                    <div class="relative" ref="container">
-                        <input type="text" name="position" v-model="search" @input="filterOptions"
-                            @focus="showDropdown = true" :class="[
-                                'bg-[#23262b] flex-1 px-4 w-full text-white py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition',
-                                filteredOptions.length && showDropdown ? 'rounded-t-3xl' : 'rounded-3xl'
-                            ]" placeholder="Артист сцени, машиніст цени,..." />
-                        <div v-if="showDropdown && filteredOptions.length"
-                            class="absolute z-10 w-full border bg-[#23262b] border-none rounded-b-3xl max-h-40 overflow-y-auto overflow-x-auto shadow scrollbar-thin">
-                            <div v-for="(option, index) in filteredOptions" :key="index"
-                                class="px-3 py-2 hover:bg-[#2d3036] cursor-pointer" @click="selectOption(option)">
-                                {{ option.position }} | {{ option.free_rate }} ставок
-                            </div>
-                        </div>
-                    </div>
+                    <ComponentSearch v-model="selectedPositionId" :options="freePostions"
+                        placeholder="Оберіть посаду..." />
                 </div>
 
-                <div class="flex flex-col gap-2">
+                <div v-if="!this.isNumber" class="flex flex-col gap-2">
                     <label for="invalidity" class="ps-4">Інвалідність</label>
                     <select name="invalidity" v-model="invalidity"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
@@ -149,7 +142,7 @@ export default {
                     </select>
                 </div>
 
-                <div class="flex flex-col gap-2">
+                <div v-if="!this.isNumber" class="flex flex-col gap-2">
                     <label class="ps-4 inline-flex items-center space-x-2 cursor-pointer">
                         <input type="checkbox" v-model="isVPO" class="peer hidden" />
                         <div
@@ -175,7 +168,7 @@ export default {
 
                 <div class="flex flex-col gap-2">
                     <label for="type_work" class="ps-4">Тип працевлаштування</label>
-                    <select name="type_work" v-model="type_work" 
+                    <select name="type_work" v-model="type_work"
                         class="bg-[#23262b] flex-1 px-4 text-white rounded-3xl  py-2 placeholder:text-gray-300 hover:bg-[#2d3036] hover:scale-101 focus:bg-[#2d3036] focus:scale-101 transition">
                         <option value="Основне місце роботи">Основне місце роботи</option>
                         <option value="Внутрішнє сумісництво">Внутрішнє сумісництво</option>

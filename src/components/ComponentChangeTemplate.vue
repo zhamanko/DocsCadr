@@ -91,7 +91,7 @@ export default {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'updated.docx';
+            a.download = this.file.name + ' ' + this.replacements['Ініціали'] + ' ' + this.replacements['Дата з'] + '.docx';
             a.click();
             URL.revokeObjectURL(url);
         },

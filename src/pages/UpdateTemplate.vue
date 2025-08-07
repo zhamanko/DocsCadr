@@ -15,7 +15,7 @@ export default {
 
             type: this.$route.query.type,
             name: this.$route.query.name,
-            addition: this.$route.query.addition,
+            addition: this.$route.query.addition || '',
             filePath: this.$route.query.file
         };
     },
@@ -31,7 +31,7 @@ export default {
                     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                 });
 
-                const file = new File([blob], this.filePath, {
+                const file = new File([blob], this.type + ' ' + this.name + ' ' + this.addition, {
                     type: blob.type,
                     lastModified: Date.now()
                 });
