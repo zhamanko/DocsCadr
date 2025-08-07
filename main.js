@@ -3,6 +3,8 @@ import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
+import pkg from 'electron-updater';
+const { autoUpdater } = pkg;
 
 let serverProcess = null;
 
@@ -37,6 +39,23 @@ const createWindow = () => {
   }
 }
 
+// AUTO-UPDATER
+function initAutoUpdater() {
+  autoUpdater.checkForUpdatesAndNotify();
+
+  autoUpdater.on('update-available', () => {
+    console.log('🔄 Update available');
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    console.log('✅ Update downloaded. Will install on quit.');
+  });
+
+  autoUpdater.on('error', (err) => {
+    console.error('❌ AutoUpdater error:', err);
+  });
+}
+
 function startBackend() {
   const dbPath = path.join(app.getPath('userData'), 'DocsCadr.sqlite');
   const userDataDir = path.join(app.getPath('userData'));
@@ -58,6 +77,10 @@ app.whenReady().then(() => {
   ensureDir(tempDir);
   startBackend();
   createWindow();
+
+  if (app.isPackaged) {
+    initAutoUpdater();
+  }
 }).catch(err => {
   console.error('Error:', err);
 });
