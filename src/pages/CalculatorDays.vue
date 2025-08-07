@@ -22,21 +22,8 @@ export default {
         };
     },
     methods: {
-        handleInputData(data) {
-            this.days = this.calculatorDays(data.startDate, data.endDate);
-            if (this.days > 365) {
-                showMessage("Кількість днів перевищує 365 днів");
-                return;
-            } else if (this.days < 0) {
-                showMessage("Кількість днів не може бути від'ємною");
-                return;
-            } else {
-                hideMessage();
-            }
-            this.annualCompensation = this.calculatorAnnual(data.usedDays, data.vacationPerYear);
-            this.additionalCompensation = this.calculatorAdditional(data.additionalDays, data.sickDays, data.unpaidLeaveDays);
-        },
-        calculatorDays(dateStart, dateEnd) {
+        // Компенсації
+        calculateWorkDays(dateStart, dateEnd) {
             const start = new Date(dateStart);
             const end = new Date(dateEnd);
             if (end < start) {
@@ -47,21 +34,9 @@ export default {
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
             return diffDays > 0 ? diffDays : "――";
         },
-        calculatorAnnual(usedDays, vacationPerYear) {
-            const compensation = (this.days / 365) * vacationPerYear - usedDays;
-            return compensation >= 0 ? compensation.toFixed(2) : "――";
-        },
-        calculatorAdditional(additionalDays, sickDays, unpaidLeaveDays) {
-            const compensation = additionalDays * (this.days - sickDays - unpaidLeaveDays) / 365;
-            return compensation >= 0 ? compensation.toFixed(2) : "――";
-        },
-        roundNum(number) {
-            if (number === "――") {
-                return "――";
-            }
-            return Math.round(number);
-        },
-        calculatorDays() {
+
+        // Розрахунок дати закінчення
+        calculateEndDate() {
             if (!this.staDate || !this.calDate || isNaN(this.calDate)) {
                 this.res = '――';
                 return;
@@ -77,6 +52,48 @@ export default {
 
             start.setDate(start.getDate() + (days - 1));
             this.res = start.toLocaleDateString('uk-UA');
+        },
+
+        calculatorAnnual(usedDays, vacationPerYear) {
+            const compensation = (this.days / 365) * vacationPerYear - usedDays;
+            return compensation >= 0 ? compensation.toFixed(2) : "――";
+        },
+        calculatorAdditional(additionalDays, sickDays, unpaidLeaveDays) {
+            const compensation = additionalDays * (this.days - sickDays - unpaidLeaveDays) / 365;
+            return compensation >= 0 ? compensation.toFixed(2) : "――";
+        },
+        roundNum(number) {
+            if (number === "――") {
+                return "――";
+            }
+            return Math.round(number);
+        },
+        handleInputData(data) {
+            console.log("Обробка вхідних даних:", data);
+            this.days = this.calculateWorkDays(data.startDate, data.endDate); 
+            if (this.days > 365) {
+                showMessage("Кількість днів перевищує 365 днів");
+                return;
+            } else if (this.days < 0) {
+                showMessage("Кількість днів не може бути від'ємною");
+                return;
+            } else {
+                hideMessage();
+            }
+            this.annualCompensation = this.calculatorAnnual(data.usedDays, data.vacationPerYear);
+            this.additionalCompensation = this.calculatorAdditional(data.additionalDays, data.sickDays, data.unpaidLeaveDays);
+        }
+    },
+    watch: {
+        staDate(newVal) {
+            if (newVal && this.calDate) {
+                this.calculateEndDate(); 
+            }
+        },
+        calDate(newVal) {
+            if (newVal && this.staDate) {
+                this.calculateEndDate();
+            }
         }
     },
     watch: {

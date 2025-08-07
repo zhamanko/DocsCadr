@@ -11,6 +11,7 @@ node_modules
 temp
 .DS_Store
 dist
+dist_electron
 dist-ssr
 coverage
 *.local

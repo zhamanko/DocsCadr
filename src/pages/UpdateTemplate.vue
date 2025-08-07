@@ -26,7 +26,7 @@ export default {
         },
         async loadFileFromElectron() {
             try {
-                const buffer = await window.electronAPI.getDocxTemplate(this.filePath); // Uint8Array or Buffer
+                const buffer = await window.electronAPI.getDocxTemplate(this.filePath); 
                 const blob = new Blob([new Uint8Array(buffer)], {
                     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                 });

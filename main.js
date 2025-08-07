@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
 
+const isDev = !app.isPackaged;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -11,23 +12,27 @@ const __dirname = path.dirname(__filename);
 const userDataDir = path.join(app.getPath('userData'));
 const tempDir = path.join(app.getPath('temp'));
 
-function ensureDir(dir){
-  if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+function ensureDir(dir) {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
 const createWindow = () => {
-    const win = new BrowserWindow({
-        width: 1200,
-        height: 800,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js'),
-        }
-    })
-    win.maximize();
-    win.webContents.openDevTools();
+  const win = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js'),
+    }
+  })
+  win.maximize();
+  if (isDev) {
     win.loadURL('http://localhost:5173');
+    win.webContents.openDevTools();
+  } else {
+    win.loadFile(path.join(__dirname, 'dist', 'index.html'));
+  }
   // або: win.loadFile('dist/index.html') у продакшн
 }
 
@@ -59,7 +64,7 @@ app.whenReady().then(() => {
 ipcMain.handle('get-docx-template', (_, filename) => {
   const filePath = path.join(userDataDir, 'templates', filename);
   if (!fs.existsSync(filePath)) throw new Error('Template not found');
-  return fs.readFileSync(filePath); 
+  return fs.readFileSync(filePath);
 });
 
 ipcMain.handle('read-file', (_, filename) => {
@@ -72,13 +77,13 @@ ipcMain.handle('save-file', (_, { filename, content }) => {
   const filePath = path.join(userDataDir, filename);
   fs.writeFileSync(filePath, content, 'utf-8');
   return `File saved: ${filePath}`;
- });
+});
 
- ipcMain.handle('delete-file', (_, filename) => {
+ipcMain.handle('delete-file', (_, filename) => {
   const filePath = path.join(userDataDir, filename);
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath);
     return `File deleted: ${filePath}`;
   }
   throw new Error(`File not found: ${filePath}`);
- });
+});
