@@ -4,6 +4,8 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
 
+let serverProcess = null;
+
 const isDev = !app.isPackaged;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,7 +35,6 @@ const createWindow = () => {
   } else {
     win.loadFile(path.join(__dirname, 'dist', 'index.html'));
   }
-  // або: win.loadFile('dist/index.html') у продакшн
 }
 
 function startBackend() {
@@ -47,7 +48,7 @@ function startBackend() {
     console.log('Database module loaded successfully');
   });
 
-  const serverProcess = spawn('node', [path.join(__dirname, 'server', 'server.js')]);
+  serverProcess = spawn('node', [path.join(__dirname, 'server', 'server.js')]);
   serverProcess.stdout.on('data', (data) => console.log(`Backend: ${data}`));
   serverProcess.stderr.on('data', (data) => console.error(`Backend error: ${data}`));
 }
@@ -60,6 +61,17 @@ app.whenReady().then(() => {
 }).catch(err => {
   console.error('Error:', err);
 });
+
+app.on('window-all-closed', () => {
+  if (serverProcess) {
+    serverProcess.kill(); 
+  }
+
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
 
 ipcMain.handle('get-docx-template', (_, filename) => {
   const filePath = path.join(userDataDir, 'templates', filename);
