@@ -1,6 +1,7 @@
 <script>
 import axios from '@/axios';
 
+import { showMessage } from '@/utils/message';
 import ComponentUploadFile from '@/components/ComponentUploadFile.vue';
 
 export default {
@@ -33,7 +34,7 @@ export default {
 
         const response = await axios.post('/api/templates-add', payload);
 
-        alert(response.data.message);
+        showMessage(response.data.message);
         this.file = null;
         this.fileType = '';
         this.fileName = '';
