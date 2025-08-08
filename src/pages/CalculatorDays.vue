@@ -96,18 +96,6 @@ export default {
             }
         }
     },
-    watch: {
-        staDate(newVal) {
-            if (newVal && this.calDate) {
-                this.calculatorDays();
-            }
-        },
-        calDate(newVal) {
-            if (newVal && this.staDate) {
-                this.calculatorDays();
-            }
-        }
-    },
 };
 
 </script>

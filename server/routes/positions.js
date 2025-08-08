@@ -43,6 +43,39 @@ router.post('/positions', (req, res) => {
   );
 });
 
+router.put('/positions/:id', (req, res) => {
+  const { id } = req.params;
+  const { position, section, unit, rate_totale, free_rate } = req.body;
+
+  if (!position || !section) {
+    return res.status(400).json({ error: 'position та section є обовʼязковими' });
+  }
+
+  const query = `
+    UPDATE positions
+    SET position = ?, 
+        section = ?, 
+        unit = ?, 
+        rate_totale = ?
+    WHERE id = ?
+  `;
+
+  db.run(
+    query,
+    [position, section, unit || null, rate_totale || 0, id],
+    function (err) {
+      if (err) {
+        console.error('Помилка оновлення позиції:', err.message);
+        return res.status(500).json({ error: err.message });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: 'Позиція не знайдена' });
+      }
+      res.json({ success: true, updated: this.changes });
+    }
+  );
+});
+
 router.get('/positions', (req, res) => {
   const search = `%${req.query.search || ''}%`;
 
