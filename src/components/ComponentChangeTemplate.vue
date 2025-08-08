@@ -94,6 +94,8 @@ export default {
             a.download = this.file.name + ' ' + this.replacements['Ініціали'] + ' ' + this.replacements['Дата з'] + '.docx';
             a.click();
             URL.revokeObjectURL(url);
+
+            
         },
         applyReplacements() {
             let updatedXml = this.originalXml;
