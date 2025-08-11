@@ -3,16 +3,22 @@ import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
+
+
+import dotenv from 'dotenv';
+dotenv.config();
+
 import pkg from 'electron-updater';
 const { autoUpdater } = pkg;
 
-let serverProcess = null;
+console.log('GH_TOKEN:', process.env.GH_TOKEN);
 
+
+let serverProcess = null;
 const isDev = !app.isPackaged;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Шляхи до файлів
 const userDataDir = path.join(app.getPath('userData'));
 const tempDir = path.join(app.getPath('temp'));
 
@@ -20,7 +26,7 @@ function ensureDir(dir) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
-const createWindow = () => {
+function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -29,7 +35,7 @@ const createWindow = () => {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
     }
-  })
+  });
   win.maximize();
   if (isDev) {
     win.loadURL('http://localhost:5173');
@@ -39,29 +45,38 @@ const createWindow = () => {
   }
 }
 
-// AUTO-UPDATER
 function initAutoUpdater() {
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.autoDownload = true;
 
-  autoUpdater.on('update-available', () => {
-    console.log('🔄 Update available');
+  autoUpdater.on('checking-for-update', () => {
+    console.log('🔍 Перевірка оновлень...');
   });
 
-  autoUpdater.on('update-downloaded', () => {
-    console.log('✅ Update downloaded. Will install on quit.');
+  autoUpdater.on('update-available', (info) => {
+    console.log('🔄 Доступне оновлення:', info.version);
+  });
+
+  autoUpdater.on('update-not-available', () => {
+    console.log('✅ Оновлень немає');
   });
 
   autoUpdater.on('error', (err) => {
-    console.error('❌ AutoUpdater error:', err);
+    console.error('❌ Помилка оновлення:', err);
   });
+
+  autoUpdater.on('update-downloaded', () => {
+    console.log('📥 Оновлення завантажено. Перезапуск...');
+    autoUpdater.quitAndInstall();
+  });
+
+  autoUpdater.checkForUpdates();
 }
 
 function startBackend() {
   const dbPath = path.join(app.getPath('userData'), 'DocsCadr.sqlite');
-  const userDataDir = path.join(app.getPath('userData'));
-  process.env.TEMP_DIR = tempDir; // Передача шляху до тимчасової директорії у середовище
-  process.env.USER_DATA_PATH = userDataDir; // Передача шляху до даних користувача у середовище
-  process.env.DB_PATH = dbPath; // Передача шляху до бази даних у середовище
+  process.env.TEMP_DIR = tempDir;
+  process.env.USER_DATA_PATH = userDataDir;
+  process.env.DB_PATH = dbPath;
 
   import('./server/db.js').then(() => {
     console.log('Database module loaded successfully');
@@ -81,56 +96,9 @@ app.whenReady().then(() => {
   if (app.isPackaged) {
     initAutoUpdater();
   }
-}).catch(err => {
-  console.error('Error:', err);
 });
 
 app.on('window-all-closed', () => {
-  if (serverProcess) {
-    serverProcess.kill(); 
-  }
-
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-
-ipcMain.handle('get-docx-template', (_, filename) => {
-  const filePath = path.join(userDataDir, 'templates', filename);
-  if (!fs.existsSync(filePath)) throw new Error('Template not found');
-  return fs.readFileSync(filePath);
-});
-
-ipcMain.handle('read-file', (_, filename) => {
-  const filePath = path.join(userDataDir, filename);
-  if (fs.existsSync(filePath)) return fs.readFileSync(filePath, 'utf-8');
-  throw new Error(`File not found: ${filePath}`);
-});
-
-ipcMain.handle('save-journal-docx', (_, { filename, buffer }) => {
-    const filePath = path.join(journalsDir, filename);
-    fs.writeFileSync(filePath, Buffer.from(buffer));
-    return `Journal saved: ${filePath}`;
-});
-
-ipcMain.handle('get-journal-docx', (_, filename) => {
-    const filePath = path.join(journalsDir, filename);
-    if (!fs.existsSync(filePath)) throw new Error('Journal file not found');
-    return fs.readFileSync(filePath);
-});
-
-ipcMain.handle('save-file', (_, { filename, content }) => {
-  const filePath = path.join(userDataDir, filename);
-  fs.writeFileSync(filePath, content, 'utf-8');
-  return `File saved: ${filePath}`;
-});
-
-ipcMain.handle('delete-file', (_, filename) => {
-  const filePath = path.join(userDataDir, filename);
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-    return `File deleted: ${filePath}`;
-  }
-  throw new Error(`File not found: ${filePath}`);
+  if (serverProcess) serverProcess.kill();
+  if (process.platform !== 'darwin') app.quit();
 });
