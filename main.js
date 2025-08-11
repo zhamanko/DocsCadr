@@ -108,6 +108,18 @@ ipcMain.handle('read-file', (_, filename) => {
   throw new Error(`File not found: ${filePath}`);
 });
 
+ipcMain.handle('save-journal-docx', (_, { filename, buffer }) => {
+    const filePath = path.join(journalsDir, filename);
+    fs.writeFileSync(filePath, Buffer.from(buffer));
+    return `Journal saved: ${filePath}`;
+});
+
+ipcMain.handle('get-journal-docx', (_, filename) => {
+    const filePath = path.join(journalsDir, filename);
+    if (!fs.existsSync(filePath)) throw new Error('Journal file not found');
+    return fs.readFileSync(filePath);
+});
+
 ipcMain.handle('save-file', (_, { filename, content }) => {
   const filePath = path.join(userDataDir, filename);
   fs.writeFileSync(filePath, content, 'utf-8');

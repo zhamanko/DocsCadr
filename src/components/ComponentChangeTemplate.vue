@@ -1,5 +1,6 @@
 <script>
 import JSZip from 'jszip';
+import axios from '@/axios';
 
 export default {
     props: {
@@ -88,14 +89,23 @@ export default {
             this.zip.file('word/document.xml', updatedXml);
             const blob = await this.zip.generateAsync({ type: 'blob' });
 
+            const fileName = `${this.file.name} ${this.replacements['Ініціали']} ${this.replacements['Дата з']}.docx`;
+
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = this.file.name + ' ' + this.replacements['Ініціали'] + ' ' + this.replacements['Дата з'] + '.docx';
+            a.download = fileName;
             a.click();
             URL.revokeObjectURL(url);
 
-            
+            try {
+                await axios.post('/api/journals', {
+                    file: fileName,
+                });
+                console.log('Назву збережено в базу');
+            } catch (error) {
+                console.error('Помилка збереження в базу:', error);
+            }
         },
         applyReplacements() {
             let updatedXml = this.originalXml;

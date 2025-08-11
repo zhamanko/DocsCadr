@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import db from '../db.js';
 
+const templatesDir = path.join(process.env.USER_DATA_PATH, 'templates');
+
 const router = Router();
 
 router.get('/journals', (req, res) => {
@@ -44,6 +46,28 @@ router.get('/journals', (req, res) => {
     }
     res.json(rows);
   });
+});
+
+router.post('/journals', (req, res) => {
+    const { file } = req.body;
+
+    if (!file) {
+        return res.status(400).json({ error: 'Не передано імʼя файлу' });
+    }
+
+    const date = new Date().toISOString().split('T')[0];
+    const stmt = db.prepare(`
+        INSERT INTO journals (number, name, date, file, flag)
+        VALUES (?, ?, ?, ?, 1)
+    `);
+
+    stmt.run('001', 'Назва документа', date, file, function (err) {
+        if (err) {
+            console.error('Помилка додавання:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true, id: this.lastID });
+    });
 });
 
 export default router;
