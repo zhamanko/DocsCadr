@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import multer from 'multer';
 import iconv from 'iconv-lite';
+import { exec } from 'child_process';
 
 const journalsDir = path.join(process.env.USER_DATA_PATH, 'journals');
 
@@ -94,5 +95,28 @@ router.post('/journals', upload.single('file'), (req, res) => {
         res.json({ success: true, id: this.lastID });
     });
 });
+
+// Видалення файлу та запису з БД
+router.delete('/journals/:id', (req, res) => {
+    const { id } = req.params;
+
+    db.get(`SELECT file FROM journals WHERE id = ?`, [id], (err, row) => {
+        if (err || !row) {
+            return res.status(404).json({ error: 'Файл не знайдено' });
+        }
+        const filePath = path.join(journalsDir, row.file);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+
+        db.run(`DELETE FROM journals WHERE id = ?`, [id], (err2) => {
+            if (err2) {
+                return res.status(500).json({ error: err2.message });
+            }
+            res.json({ success: true });
+        });
+    });
+});
+
 
 export default router;
