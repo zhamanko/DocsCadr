@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import db from '../db.js';
+import fs from 'fs';
+import path from 'path';
+import multer from 'multer';
+import iconv from 'iconv-lite';
 
-const templatesDir = path.join(process.env.USER_DATA_PATH, 'templates');
+const journalsDir = path.join(process.env.USER_DATA_PATH, 'journals');
 
 const router = Router();
 
@@ -48,22 +52,43 @@ router.get('/journals', (req, res) => {
   });
 });
 
-router.post('/journals', (req, res) => {
-    const { file } = req.body;
+if (!fs.existsSync(journalsDir)) {
+    fs.mkdirSync(journalsDir, { recursive: true });
+}
 
-    if (!file) {
-        return res.status(400).json({ error: 'Не передано імʼя файлу' });
+// Налаштування multer для збереження в journalsDir
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, journalsDir);
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+
+const upload = multer({ storage });
+
+
+router.post('/journals', upload.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'Файл не передано' });
     }
 
-    const date = new Date().toISOString().split('T')[0];
-    const stmt = db.prepare(`
+    // Примусове перетворення у UTF-8
+    let originalname = req.file.originalname;
+    if (!Buffer.isBuffer(originalname)) {
+        // multer віддає як string у UTF-8, але якщо воно вже зіпсоване — пробуємо конвертувати
+        originalname = iconv.decode(Buffer.from(originalname, 'binary'), 'utf8');
+    }
+
+    const { number, date } = req.body;
+
+    db.run(`
         INSERT INTO journals (number, name, date, file, flag)
         VALUES (?, ?, ?, ?, 1)
-    `);
-
-    stmt.run('001', 'Назва документа', date, file, function (err) {
+    `, [number, originalname, date, originalname], function (err) {
         if (err) {
-            console.error('Помилка додавання:', err.message);
+            console.error('SQL error:', err.message);
             return res.status(500).json({ error: err.message });
         }
         res.json({ success: true, id: this.lastID });

@@ -89,7 +89,7 @@ export default {
             this.zip.file('word/document.xml', updatedXml);
             const blob = await this.zip.generateAsync({ type: 'blob' });
 
-            const fileName = `${this.file.name} ${this.replacements['Ініціали']} ${this.replacements['Дата з']}.docx`;
+            const fileName = `${this.file.name} ${this.replacements['Ініціали']} ${ this.replacements['Дата з']}.docx`;
 
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -98,13 +98,18 @@ export default {
             a.click();
             URL.revokeObjectURL(url);
 
+            const formData = new FormData();
+            formData.append('file', blob, fileName);
+            formData.append('number', this.replacements['Номер наказу']);
+            formData.append('date', this.replacements['Дата наказу']);
+
             try {
-                await axios.post('/api/journals', {
-                    file: fileName,
+                await axios.post('/api/journals', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                console.log('Назву збережено в базу');
+                console.log('Файл збережено в journalsDir і в БД');
             } catch (error) {
-                console.error('Помилка збереження в базу:', error);
+                console.error('Помилка збереження:', error);
             }
         },
         applyReplacements() {
