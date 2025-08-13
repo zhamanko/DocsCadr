@@ -53,7 +53,7 @@
     ],
     "asar": false,
     "win": {
-      "target": "nsis"
+      "target": "dir"
     }
   },
   "devDependencies": {
