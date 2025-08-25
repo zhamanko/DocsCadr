@@ -102,3 +102,42 @@ app.on('window-all-closed', () => {
   if (serverProcess) serverProcess.kill();
   if (process.platform !== 'darwin') app.quit();
 });
+
+ipcMain.handle('get-docx-template', (_, filename) => {
+  const filePath = path.join(userDataDir, 'templates', filename);
+  if (!fs.existsSync(filePath)) throw new Error('Template not found');
+  return fs.readFileSync(filePath);
+});
+
+ipcMain.handle('read-file', (_, filename) => {
+  const filePath = path.join(userDataDir, filename);
+  if (fs.existsSync(filePath)) return fs.readFileSync(filePath, 'utf-8');
+  throw new Error(`File not found: ${filePath}`);
+});
+
+ipcMain.handle('save-journal-docx', (_, { filename, buffer }) => {
+    const filePath = path.join(journalsDir, filename);
+    fs.writeFileSync(filePath, Buffer.from(buffer));
+    return `Journal saved: ${filePath}`;
+});
+
+ipcMain.handle('get-journal-docx', (_, filename) => {
+    const filePath = path.join(journalsDir, filename);
+    if (!fs.existsSync(filePath)) throw new Error('Journal file not found');
+    return fs.readFileSync(filePath);
+});
+
+ipcMain.handle('save-file', (_, { filename, content }) => {
+  const filePath = path.join(userDataDir, filename);
+  fs.writeFileSync(filePath, content, 'utf-8');
+  return `File saved: ${filePath}`;
+});
+
+ipcMain.handle('delete-file', (_, filename) => {
+  const filePath = path.join(userDataDir, filename);
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+    return `File deleted: ${filePath}`;
+  }
+  throw new Error(`File not found: ${filePath}`);
+});
