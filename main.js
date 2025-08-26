@@ -4,16 +4,6 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
 
-
-import dotenv from 'dotenv';
-dotenv.config();
-
-import pkg from 'electron-updater';
-const { autoUpdater } = pkg;
-
-console.log('GH_TOKEN:', process.env.GH_TOKEN);
-
-
 let serverProcess = null;
 const isDev = !app.isPackaged;
 const __filename = fileURLToPath(import.meta.url);
@@ -45,33 +35,6 @@ function createWindow() {
   }
 }
 
-function initAutoUpdater() {
-  autoUpdater.autoDownload = true;
-
-  autoUpdater.on('checking-for-update', () => {
-    console.log('🔍 Перевірка оновлень...');
-  });
-
-  autoUpdater.on('update-available', (info) => {
-    console.log('🔄 Доступне оновлення:', info.version);
-  });
-
-  autoUpdater.on('update-not-available', () => {
-    console.log('✅ Оновлень немає');
-  });
-
-  autoUpdater.on('error', (err) => {
-    console.error('❌ Помилка оновлення:', err);
-  });
-
-  autoUpdater.on('update-downloaded', () => {
-    console.log('📥 Оновлення завантажено. Перезапуск...');
-    autoUpdater.quitAndInstall();
-  });
-
-  autoUpdater.checkForUpdates();
-}
-
 function startBackend() {
   const dbPath = path.join(app.getPath('userData'), 'DocsCadr.sqlite');
   process.env.TEMP_DIR = tempDir;
@@ -92,10 +55,6 @@ app.whenReady().then(() => {
   ensureDir(tempDir);
   startBackend();
   createWindow();
-
-  if (app.isPackaged) {
-    initAutoUpdater();
-  }
 });
 
 app.on('window-all-closed', () => {
