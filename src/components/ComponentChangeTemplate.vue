@@ -68,7 +68,13 @@ export default {
 
             for (const key of this.extractedKeys) {
                 const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
-                updatedXml = updatedXml.replace(regex, this.replacements[key] || '');
+                let value = this.replacements[key] || '';
+
+                if (key.toLowerCase().includes('повна дата')) {
+                    value = this.formatDate(value);
+                }
+
+                updatedXml = updatedXml.replace(regex, value);
             }
 
             this.zip.file('word/document.xml', updatedXml);
@@ -89,7 +95,17 @@ export default {
             this.zip.file('word/document.xml', updatedXml);
             const blob = await this.zip.generateAsync({ type: 'blob' });
 
-            const fileName = `${this.file.name} ${this.replacements['Ініціали']} ${ this.replacements['Дата з']}.docx`;
+            let numKey;
+
+            if (this.file.name.toLowerCase().includes('відрядження')){
+                numKey = '-вд';
+            } else if (this.file.name.toLowerCase().includes('щорічна') || this.file.name.toLowerCase().includes('додаткова')){
+                numKey = '-к/в';
+            } else {
+                numKey = '-к';
+            }
+
+            const fileName = `${this.file.name} ${this.replacements['Ініціали']}.docx`;
 
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -100,7 +116,7 @@ export default {
 
             const formData = new FormData();
             formData.append('file', blob, fileName);
-            formData.append('number', this.replacements['Номер наказу']);
+            formData.append('number', this.replacements['Номер наказу'] + numKey);
             formData.append('date', this.replacements['Дата наказу']);
 
             try {
@@ -140,10 +156,35 @@ export default {
             this.replacements[key] = this.formatDateToDDMMYYYY(isoDate);
             this.onFieldChange();
         },
+        formatDate(dateString) {
+            let date;
+
+            if (!dateString) return '';
+
+            // Якщо input типу <input type="date"> → він повертає YYYY-MM-DD
+            if (dateString.includes('-')) {
+                date = new Date(dateString);
+            } else if (dateString.includes('.')) {
+                const [day, month, year] = dateString.split('.');
+                date = new Date(`${year}-${month}-${day}`);
+            } else {
+                date = new Date(dateString);
+            }
+
+            if (isNaN(date)) return dateString;
+
+            let formatted = new Intl.DateTimeFormat('uk-UA', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(date);
+
+            return formatted.replace(/\s?р\.$/, '').trim();
+        },
         isDateKey(key) {
             return /Дата|дата/i.test(key)
         }
-    }
+    },
 }
 </script>
 <template>

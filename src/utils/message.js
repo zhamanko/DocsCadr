@@ -3,7 +3,7 @@ import ComponentMessage from '@/components/ComponentMessage.vue';
 
 let container = null;
 
-export function showMessage(message, duration = 1800000, title) {
+export function showMessage(message, duration = 8000, title) {
   container = document.createElement('div');
   container.classList.add('component-message-container');
   document.body.appendChild(container);

@@ -1,6 +1,6 @@
 {
   "name": "docscadr",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "This template should help get you started developing with Vue 3 in Vite.",
   "homepage": "https://github.com/zhamanko/DocsCadr#readme",
@@ -29,6 +29,7 @@
     "tailwindcss": "^4.1.11",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1",
+    "dotenv": "^17.2.1",
     "wait-on": "^8.0.3"
   },
   "build": {
