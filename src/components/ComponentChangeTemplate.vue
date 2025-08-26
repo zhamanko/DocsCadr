@@ -161,7 +161,6 @@ export default {
 
             if (!dateString) return '';
 
-            // Якщо input типу <input type="date"> → він повертає YYYY-MM-DD
             if (dateString.includes('-')) {
                 date = new Date(dateString);
             } else if (dateString.includes('.')) {
