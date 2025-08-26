@@ -95,7 +95,17 @@ export default {
             this.zip.file('word/document.xml', updatedXml);
             const blob = await this.zip.generateAsync({ type: 'blob' });
 
-            const fileName = `${this.file.name} ${this.replacements['Ініціали']} ${this.replacements['Дата з']}.docx`;
+            let numKey;
+
+            if (this.file.name.toLowerCase().includes('відрядження')){
+                numKey = '-вд';
+            } else if (this.file.name.toLowerCase().includes('щорічна') || this.file.name.toLowerCase().includes('додаткова')){
+                numKey = '-к/в';
+            } else {
+                numKey = '-к';
+            }
+
+            const fileName = `${this.file.name} ${this.replacements['Ініціали']}.docx`;
 
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -106,7 +116,7 @@ export default {
 
             const formData = new FormData();
             formData.append('file', blob, fileName);
-            formData.append('number', this.replacements['Номер наказу']);
+            formData.append('number', this.replacements['Номер наказу'] + numKey);
             formData.append('date', this.replacements['Дата наказу']);
 
             try {
